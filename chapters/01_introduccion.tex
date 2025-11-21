@@ -1,0 +1,51 @@
+\chapter{Introducción}
+
+En la etapa anterior de este trabajo \cite{proyecto1}, se completó el desarrollo del modelado matemático que describe la dinámica térmica de un sistema de enfriamiento por agua en circuito cerrado, acoplado a un panel solar fotovoltaico. El sistema físico modelado consta de dos elementos activos manipulables: una bomba hidráulica encargada de la circulación del fluido refrigerante y un ventilador integrado a un intercambiador de calor, diseñado para disipar la energía térmica hacia el ambiente.
+
+El resultado de dicha etapa fue un sistema de Ecuaciones Diferenciales Ordinarias (EDO) validado, que relaciona las entradas de tensión ($V_\text{bomb}, V_\text{vent}$) y las perturbaciones ambientales con la evolución temporal de la temperatura de operación del panel ($T_p$).
+
+\section*{Planteamiento del Problema}
+
+La eficiencia de conversión eléctrica de los paneles fotovoltaicos es sensible a la temperatura, cada grado sobre su temperatura de operación (\SI{25}{\degreeCelsius}) disminuye su rendimiento ligeramente. Sin un mecanismo de regulación activo, el panel queda expuesto a las variaciones estocásticas de la irradiancia solar y la temperatura ambiente.
+
+El análisis preliminar del sistema (simulaciones en lazo abierto sin intervención de control) revela que, bajo condiciones de alta carga térmica, el panel tiende a alcanzar temperaturas de equilibrio cercanas a los \SI{71}{\degreeCelsius}. Este comportamiento supera ampliamente su estandar de operación, conllevando dos riesgos:
+\begin{enumerate}
+    \item Degradación acelerada de los materiales por estrés térmico.
+    \item Pérdida de potencia útil generada.
+\end{enumerate}
+
+El desafío que aborda el presente proyecto es que la operación manual o fija del sistema de refrigeración es insuficiente. Operar los actuadores a máxima potencia de forma constante garantiza el enfriamiento, pero resulta \textbf{energéticamente ineficiente}, consumiendo gran parte de la energía que el propio panel genera. Por consiguiente, se hace indispensable diseñar un sistema de control en \textbf{lazo cerrado} que gestione este compromiso de forma autónoma.
+
+\section*{Variables del Sistema de Control}
+
+Para el diseño del esquema de control, se definen las siguientes variables sobre el modelo dinámico:
+
+\begin{itemize}
+    \item \textbf{Variable Controlada (Salida):} Temperatura superficial del panel solar ($T_p$).
+    \item \textbf{Variables Manipuladas (Entradas):} Tensión aplicada a la bomba ($V_\text{bomb}$) y al ventilador ($V_\text{vent}$).
+    \item \textbf{Perturbaciones:} Irradiancia solar ($G$), Temperatura ambiente ($T_\text{amb}$) y Velocidad del viento ($v_\text{vent}$).
+\end{itemize}
+
+\section*{Objetivos del Proyecto}
+
+\subsection*{Objetivo General}
+Diseñar e implementar un sistema de control realimentado (Controlador Proporcional) sobre el modelo dinámico del panel solar, capaz de satisfacer las especificaciones de respuesta transitoria y estacionaria definidas para la preservación del equipo y la eficiencia energética.
+
+\subsection*{Especificaciones de Respuesta}
+De acuerdo con los criterios de diseño postulados en la etapa de modelado, el controlador debe cumplir estrictamente con las siguientes especificaciones de desempeño:
+
+\begin{enumerate}
+    \item \textbf{Límite de Seguridad Térmica:} Mantener la temperatura superficial del panel por debajo de \SI{55}{\degreeCelsius} durante las horas de máxima irradiancia, con el fin de minimizar la degradación de los materiales.
+    \item \textbf{Estabilidad del Régimen:} Garantizar un régimen térmico estable, evitando oscilaciones superiores a \SI{2}{\degreeCelsius} en la superficie del panel para prevenir fatiga por ciclo térmico.
+    \item \textbf{Eficiencia Energética:} Optimizar el compromiso entre rendimiento térmico y consumo energético, mediante estrategias de refrigeración dinámica que ajusten su intensidad estrictamente de acuerdo con las condiciones ambientales.
+\end{enumerate}
+
+\subsection*{Objetivos Específicos}
+Para dar cumplimiento a las especificaciones anteriores, se plantean las siguientes tareas:
+\begin{itemize}
+    \item Analizar el comportamiento dinámico en \textbf{lazo abierto} (ante entradas tipo escalón) para establecer la línea base de temperatura sin intervención.
+    \item Programar un algoritmo de control Proporcional (P) a aplicar a las entradas manipulables.
+    \item Sintonizar la ganancia ($K_c$) y el punto de operación (Offset) para eliminar oscilaciones y asegurar el límite térmico.
+    \item Evaluar cuantitativamente el desempeño del controlador mediante métricas de respuesta al escalón de referencia (sobrepaso, tiempo de estabilización y error de estado estacionario).
+    \item Verificar la robustez del sistema simulando su comportamiento ante perfiles de perturbaciones realistas (días nublados e intermitentes).
+\end{itemize}

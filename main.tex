@@ -1,0 +1,219 @@
+\documentclass[12pt,letterpaper]{report}
+
+% ===========================
+% PAQUETES BÁSICOS
+% ===========================
+\usepackage[spanish]{babel}             % Idioma español
+\usepackage[T1]{fontenc}                % Codificación de salida
+\usepackage[utf8]{inputenc}             % Codificación de entrada
+\usepackage{csquotes}
+\usepackage[letterpaper,
+    top=2.5cm,
+    bottom=2cm,
+    left=2.5cm,
+    right=2cm,
+    headsep=0.3cm,
+    footskip=1.2cm]{geometry}
+\setlength{\headheight}{14.5pt} % Ya corregido.
+
+\usepackage{newtxtext,newtxmath}        % Fuente Times New Roman
+\usepackage{setspace}                   % Interlineado
+\usepackage{multicol}
+
+% ===========================
+% FIGURAS Y TABLAS
+% ===========================
+\usepackage{graphicx}                   % Imágenes
+\graphicspath{{figures/}}
+\usepackage{float}                      % Posicionamiento [H]
+\usepackage[table]{xcolor}              % Colores
+\usepackage[skip=4pt, labelfont=bf,
+            justification=centering,
+            margin=2cm]{caption}
+\usepackage{subcaption}                 % Leyendas de subfiguras
+\usepackage{wrapfig}
+
+\let\Bbbk\relax                % Evitar conflicto con newtxmath
+% ===========================
+% MATEMÁTICAS Y CIENCIAS
+% ===========================
+\usepackage{amsmath,amssymb,mathtools}  % Símbolos y entornos matemáticos
+\usepackage{siunitx}                    % Unidades físicas
+
+% ===========================
+% TÍTULOS Y PÁGINA
+% ===========================
+\usepackage{titlesec}                   % Formato de capítulos/secciones
+\usepackage{fancyhdr}                   % Encabezados y pies de página
+
+% ===========================
+% HIPERVÍNCULOS Y CITAS
+% ===========================
+\usepackage[
+    backend=biber,         % Motor de procesamiento recomendado
+    style=ieee,            % Estilo de citas numérico (ajustado de ieeetr)
+    natbib=true            % Permite usar \citep y \citet
+]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage[bookmarks=true,
+            bookmarksnumbered,
+            colorlinks=false,
+            hidelinks,
+            breaklinks]{hyperref}
+
+\usepackage{listingsutf8} % soporte UTF-8 en listings
+
+% Colores personalizados (opcional)
+\definecolor{miblue}{rgb}{0,0,1}
+\definecolor{migray}{rgb}{0.4,0.4,0.4}
+\definecolor{miteal}{rgb}{0.0,0.5,0.5}
+
+% Configuración general de listings para MATLAB
+\lstset{
+    language=Matlab,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={ñ}{{\~n}}1
+            {Ñ}{{\~N}}1
+            {á}{{\'a}}1
+            {é}{{\'e}}1
+            {í}{{\'i}}1
+            {ó}{{\'o}}1
+            {ú}{{\'u}}1
+            {Á}{{\'A}}1
+            {É}{{\'E}}1
+            {Í}{{\'I}}1
+            {Ó}{{\'O}}1
+            {Ú}{{\'U}}1
+            {°}{{$^{\circ}$}}1
+            {·}{{$\cdot$}}1,
+    backgroundcolor=\color{white},
+    basicstyle=\ttfamily\scriptsize,    % tamaño de letra pequeño pero legible
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=4pt,                      % separación entre números y código
+    xleftmargin=0.5em,                  % margen izquierdo del código
+    xrightmargin=0.5em,                 % margen derecho del código
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+    keywordstyle=\color{miblue},
+    commentstyle=\color{migray},
+    stringstyle=\color{miteal},
+    showstringspaces=false
+}
+
+% filas más compactas y fuente más pequeña en todas las tablas
+\AtBeginEnvironment{tabular}{\small\renewcommand{\arraystretch}{0.9}}
+\AtBeginEnvironment{tabularx}{\small\renewcommand{\arraystretch}{0.9}}
+\setlength{\tabcolsep}{4pt}
+
+% INTERLINEADO Y PÁRRAFOS
+\onehalfspacing                     % Interlineado 1.5
+\setlength{\parskip}{0.4cm}         % espacio entre párrafos
+\setlength{\parindent}{1cm}         % sangría
+
+% ENCABEZADOS Y PIE DE PÁGINA
+\fancypagestyle{plain}{
+    \fancyhf{} % Limpia todos los encabezados y pies existentes
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt} % Asegura que no haya línea en el encabezado
+    \renewcommand{\footrulewidth}{0pt} % Asegura que no haya línea en el pie de página
+}
+
+% COMANDOS ÚTILES DEL INFORME
+\newcommand{\AuthorName}{Joshua S. Oliva Parra}
+\newcommand{\ProfessorName}{Juan Pablo Segovia Vera}
+\newcommand{\MainTitle}{Modelación de sistema de enfriamiento de agua en
+circuito cerrado para paneles fotovoltaicos}
+
+% EXTRAS
+\sisetup{
+    per-mode = symbol,              % usa "/" en lugar de exponentes negativos
+    inter-unit-product = \cdot,     % punto medio para multiplicar unidades
+}
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+
+% === CONFIGURACIÓN DE TÍTULOS DE ÍNDICES (PAQUETE TOCLOFT) ===
+\usepackage[titles]{tocloft} 
+
+% 1. Reducir espacio vertical ANTES del título (Sube el título)
+\setlength{\cftbeforeloftitleskip}{-2em} 
+\setlength{\cftbeforelottitleskip}{-2em}
+\setlength{\cftbeforetoctitleskip}{-2em} % También lo aplicamos al índice general si quieres
+
+% 2. Reducir espacio vertical DESPUÉS del título
+\setlength{\cftafterloftitleskip}{10pt}
+\setlength{\cftafterlottitleskip}{10pt}
+\setlength{\cftaftertoctitleskip}{10pt}
+
+% 3. Cambiar tamaño de fuente (De \Huge a \Large)
+\renewcommand{\cftloftitlefont}{\Large\bfseries\sffamily}
+\renewcommand{\cftlottitlefont}{\Large\bfseries\sffamily}
+\renewcommand{\cfttoctitlefont}{\Large\bfseries\sffamily}
+
+\begin{document}
+
+% ========== PORTADA =============
+\input{portada.tex}
+\input{chapters/00_resumen}
+
+% =================== ÍNDICE =======================
+\newpage
+\begin{spacing}{1}
+    \setlength{\parskip}{0pt}
+
+    % Configuración de profundidad
+    \setcounter{secnumdepth}{3}
+    \setcounter{tocdepth}{2}
+    \pdfbookmark{\contentsname}{toc}
+
+    % 1. Índice General (Va solo)
+    \tableofcontents
+    \newpage % Salto de página obligatorio después del índice general
+
+    % 2. Índices de Figuras y Tablas (Juntos)
+    \begingroup
+    % Este comando mágico elimina el salto de página entre listas
+    \let\clearpage\relax
+    \let\cleardoublepage\relax
+
+    % Imprimimos Figuras
+    \listoffigures
+
+    \vspace{2em} % Espacio manual para separar ambas listas
+
+    % Imprimimos Tablas (aparecerá justo debajo)
+    \listoftables
+    \endgroup
+
+\end{spacing}
+
+% ========== CUERPO PRINCIPAL ==========
+\newpage
+
+\include{chapters/01_introduccion}
+\include{chapters/02_metodologia}
+\include{chapters/03_resultados_analisis}
+\include{chapters/04_conclusiones}
+
+% ========== APÉNDICES ===========
+\newpage
+\appendix
+
+\input{appendices/A_modelo_perturbaciones}
+
+% ========== BIBLIOGRAFÍA ==========
+\newpage
+\pdfbookmark{Bibliografía}{bibliografia}
+\printbibliography[
+    heading=bibintoc, % Añade la entrada al índice
+    title={Bibliografía}
+]
+
+
+
+\end{document}
