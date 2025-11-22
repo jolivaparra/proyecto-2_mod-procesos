@@ -1,0 +1,92 @@
+\setlength{\headheight}{14.5pt} % Ya corregido.
+
+% Colores personalizados (opcional)
+\definecolor{miblue}{rgb}{0,0,1}
+\definecolor{migray}{rgb}{0.4,0.4,0.4}
+\definecolor{miteal}{rgb}{0.0,0.5,0.5}
+
+% Configuración general de listings para MATLAB
+\lstset{
+language=Matlab,
+inputencoding=utf8,
+extendedchars=true,
+literate={ñ}{{\~n}}1
+{Ñ}{{\~N}}1
+{á}{{\'a}}1
+{é}{{\'e}}1
+{í}{{\'i}}1
+{ó}{{\'o}}1
+{ú}{{\'u}}1
+{Á}{{\'A}}1
+{É}{{\'E}}1
+{Í}{{\'I}}1
+{Ó}{{\'O}}1
+{Ú}{{\'U}}1
+{°}{{$^{\circ}$}}1
+{·}{{$\cdot$}}1,
+backgroundcolor=\color{white},
+basicstyle=\ttfamily\scriptsize,    % tamaño de letra pequeño pero legible
+numbers=left,
+numberstyle=\tiny,
+numbersep=4pt,                      % separación entre números y código
+xleftmargin=0.5em,                  % margen izquierdo del código
+xrightmargin=0.5em,                 % margen derecho del código
+breaklines=true,
+frame=single,
+captionpos=b,
+keywordstyle=\color{miblue},
+commentstyle=\color{migray},
+stringstyle=\color{miteal},
+showstringspaces=false
+}
+
+% filas más compactas y fuente más pequeña en todas las tablas
+\AtBeginEnvironment{tabular}{\small\renewcommand{\arraystretch}{0.9}}
+\AtBeginEnvironment{tabularx}{\small\renewcommand{\arraystretch}{0.9}}
+\setlength{\tabcolsep}{4pt}
+
+% INTERLINEADO Y PÁRRAFOS
+\onehalfspacing                     % Interlineado 1.5
+\setlength{\parskip}{0.4cm}         % espacio entre párrafos
+\setlength{\parindent}{1cm}         % sangría
+
+% ENCABEZADOS Y PIE DE PÁGINA
+\fancypagestyle{plain}{
+    \fancyhf{} % Limpia todos los encabezados y pies existentes
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt} % Asegura que no haya línea en el encabezado
+    \renewcommand{\footrulewidth}{0pt} % Asegura que no haya línea en el pie de página
+}
+
+% COMANDOS ÚTILES DEL INFORME
+\newcommand{\AuthorName}{Joshua S. Oliva Parra}
+\newcommand{\ProfessorName}{Juan Pablo Segovia Vera}
+\newcommand{\MainTitle}{Modelación de sistema de enfriamiento de agua en
+    circuito cerrado para paneles fotovoltaicos}
+
+% EXTRAS
+\sisetup{
+    per-mode = symbol,              % usa "/" en lugar de exponentes negativos
+    inter-unit-product = \cdot,     % punto medio para multiplicar unidades
+}
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+
+% === CONFIGURACIÓN DE TÍTULOS DE ÍNDICES (PAQUETE TOCLOFT) ===
+
+
+% 1. Reducir espacio vertical ANTES del título (Sube el título)
+\setlength{\cftbeforeloftitleskip}{-2em}
+\setlength{\cftbeforelottitleskip}{-2em}
+\setlength{\cftbeforetoctitleskip}{-2em} % También lo aplicamos al índice general si quieres
+
+% 2. Reducir espacio vertical DESPUÉS del título
+\setlength{\cftafterloftitleskip}{10pt}
+\setlength{\cftafterlottitleskip}{10pt}
+\setlength{\cftaftertoctitleskip}{10pt}
+
+% 3. Cambiar tamaño de fuente (De \Huge a \Large)
+\renewcommand{\cftloftitlefont}{\Large\bfseries\sffamily}
+\renewcommand{\cftlottitlefont}{\Large\bfseries\sffamily}
+\renewcommand{\cfttoctitlefont}{\Large\bfseries\sffamily}

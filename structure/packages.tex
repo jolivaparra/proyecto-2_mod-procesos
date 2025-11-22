@@ -1,0 +1,69 @@
+
+% ===========================
+% PAQUETES BÁSICOS
+% ===========================
+\usepackage[spanish]{babel}             % Idioma español
+\usepackage[T1]{fontenc}                % Codificación de salida
+\usepackage[utf8]{inputenc}             % Codificación de entrada
+\usepackage{csquotes}
+\usepackage[letterpaper,
+    top=2.5cm,
+    bottom=2cm,
+    left=2.5cm,
+    right=2cm,
+    headsep=0.3cm,
+    footskip=1.2cm]{geometry}
+
+\usepackage{newtxtext,newtxmath}        % Fuente Times New Roman
+\usepackage{setspace}                   % Interlineado
+\usepackage{multicol}
+\let\Bbbk\relax                % Evitar conflicto con newtxmath
+
+% ===========================
+% FIGURAS Y TABLAS
+% ===========================
+\usepackage{graphicx}                   % Imágenes
+\graphicspath{{figures/}}
+\usepackage{float}                      % Posicionamiento [H]
+\usepackage[table]{xcolor}              % Colores
+\usepackage[skip=4pt, labelfont=bf,
+    justification=centering,
+    margin=2cm]{caption}
+\usepackage{subcaption}                 % Leyendas de subfiguras
+\usepackage{wrapfig}
+
+
+% ===========================
+% MATEMÁTICAS Y CIENCIAS
+% ===========================
+\usepackage{amssymb, mathtools, esint, bm}  % Símbolos y entornos matemáticos
+\usepackage{siunitx}                    % Unidades físicas
+
+% ===========================
+% TÍTULOS Y PÁGINA
+% ===========================
+\usepackage{titlesec}                   % Formato de capítulos/secciones
+\usepackage{fancyhdr}                   % Encabezados y pies de página
+
+% ===========================
+% HIPERVÍNCULOS Y CITAS
+% ===========================
+\usepackage[
+    backend=biber,         % Motor de procesamiento recomendado
+    style=ieee,            % Estilo de citas numérico (ajustado de ieeetr)
+    natbib=true            % Permite usar \citep y \citet
+]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage[bookmarks=true,
+    bookmarksnumbered,
+    colorlinks=false,
+    hidelinks,
+    breaklinks]{hyperref}
+
+
+% =========================
+% OTROS
+% =========================
+\usepackage{listingsutf8} % Soporte UTF-8 en listings
+\usepackage[titles]{tocloft} % Configuración de títulos

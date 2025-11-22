@@ -1,0 +1,28 @@
+\begin{spacing}{1}
+    \setlength{\parskip}{0pt}
+
+    % Configuración de profundidad
+    \setcounter{secnumdepth}{3}
+    \setcounter{tocdepth}{2}
+    \pdfbookmark{\contentsname}{toc}
+
+    % 1. Índice General (Va solo)
+    \tableofcontents
+    \newpage % Salto de página obligatorio después del índice general
+
+    % 2. Índices de Figuras y Tablas (Juntos)
+    \begingroup
+    % Este comando mágico elimina el salto de página entre listas
+    \let\clearpage\relax
+    \let\cleardoublepage\relax
+
+    % Imprimimos Figuras
+    \listoffigures
+
+    \vspace{2em} % Espacio manual para separar ambas listas
+
+    % Imprimimos Tablas (aparecerá justo debajo)
+    \listoftables
+    \endgroup
+
+\end{spacing}
