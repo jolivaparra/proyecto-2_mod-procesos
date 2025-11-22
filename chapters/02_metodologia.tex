@@ -6,6 +6,8 @@ El sistema bajo estudio corresponde al modelo matemático desarrollado y validad
 
 Para efectos del diseño de la estrategia de control, la física detallada del intercambio de calor se abstrae en un bloque dinámico o ``planta''. De acuerdo con la teoría de control clásica \cite{ogata2010modern}, el sistema se define por la relación causal entre sus variables:
 
+
+
 \begin{itemize}
     \item \textbf{Entradas de Control ($u$):} Corresponden a las tensiones eléctricas aplicadas a los actuadores, específicamente la tensión de la bomba ($V_{bomb}$) y la del ventilador ($V_{vent}$). Estas son las variables que el controlador modificará para influir en el sistema.
     \item \textbf{Entradas de Perturbación ($d$):} Son variables exógenas que afectan la dinámica térmica pero no son manipulables, principalmente la irradiancia solar ($G$) y la temperatura ambiente ($T_{amb}$).
@@ -22,18 +24,42 @@ La Figura \ref{fig:diag:lazo-abierto} ilustra el modelo conceptual utilizado par
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{figures/diagramas/diagrama-lazo-abierto.pdf}
+    \includegraphics[width=\textwidth]{diagramas/lazo-abierto.pdf}
     \caption{Diagrama esquemático del proceso en lazo abierto con generador de señal tipo escalón.}
     \label{fig:diag:lazo-abierto}
 \end{figure}
 
 Como se observa en el diagrama, un \textbf{Generador de Señal} aplica un estímulo predefinido (tipo escalón) a los actuadores. Esta señal excita la planta térmica, la cual evoluciona bajo la influencia conjunta de la acción de control y las perturbaciones ambientales, resultando en la trayectoria de temperatura de salida.
 
+\subsection*{Suposiciones y Limitaciones del Modelo}
+
+Para el diseño y validación del controlador, se establecieron las siguientes simplificaciones sobre la física del sistema.
+
+\begin{enumerate}
+
+    \item \textbf{Dinámica de Actuadores Despreciable:}
+          Se asume que la respuesta mecánica de los actuadores (tiempo que tarda el ventilador en alcanzar sus RPM o la bomba en establecer el flujo) es instantánea en comparación con la dinámica térmica del sistema.
+          \textit{Justificación:} La constante de tiempo térmica del panel y el agua es del orden de minutos u horas, mientras que la constante de tiempo electromecánica de los motores suele trabajar en rangos desde milisegundos a segundos. Por tanto, se modela la relación Voltaje $\to$ Flujo como una ganancia estática pura.
+
+    \item \textbf{Medición Ideal (Sensores sin Ruido):}
+          El esquema de control asume que la variable realimentada ($T_p$) se obtiene de forma instantánea y libre de ruido estocástico o errores de cuantización.
+          \textit{Justificación:} El objetivo principal es validar la lógica de control y la estabilidad térmica ante los escenarios de perturbación trabajados. En una implementación física futura, se requeriría una etapa de filtrado que no se contempla en esta etapa de diseño numérico.
+
+\end{enumerate}
+
+
 \section{Diseño de la Estrategia de Control en Lazo Cerrado}
 
 Para cumplir con los objetivos de estabilización y seguridad térmica, pasa a un esquema de \textbf{Lazo Cerrado}. En esta configuración, el sistema mide continuamente la variable de salida ($T_p$) y la compara con una referencia deseada ($Ref$), generando una acción correctiva proporcional al error detectado \cite{ogata2010modern}.
 
-El diagrama esquemático del proceso se modifica integrando el bloque del controlador lógico, tal como se describe a continuación.
+El siguiente diagrama representa el esquema conceptual del sistema en lazo cerrado que será implementado:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{diagramas/lazo-cerrado.pdf}
+    \caption{Diagrama esquemático del proceso en lazo cerrado}
+    \label{fig:diag:lazo-cerrado}
+\end{figure}
 
 \subsection{Algoritmo de Control Proporcional}
 Se usó la estrategia de control clásica de tipo Proporcional (P) con compensación de punto de operación (Offset). Estrategias de control más complejas no fueron usadas en el proyecto, sin embargo se deja abierta la posibilidad de implementarlos en un desarrollo futuro, considerado como mejoras de diseño.
@@ -59,13 +85,13 @@ Consideraciones:
     \item \textbf{Valor del Offset} Se fijó un valor para el Offset de \SI{5}{\volt}, fijado experimentalmente con el objetivo de evitar activaciones bruscas en momentos tempranos del día. Este valor puede ser ajustado en función de las condiciones ambientales y los objetivos de eficiencia energética.
 \end{itemize}
 
-\section{Gestión de Actuadores}
+\subsection{Gestión de Actuadores}
 
 El sistema físico cuenta con dos entradas manipulables ($V_{bomb}, V_{vent}$) pero el proyecto se estructuró de forma que se genera una única señal de mando $u(t)$ la cual será aplicada en cada actuador de igual manera.
 
-De forma experimental se obtuvo que la bomba de agua tiene relavitamente los mismos efectos cuando esta funciona a su voltaje nominal (\SI{24}{\volt}) que a un voltaje reducido de \SI{3}{\volt}. Por lo tanto, se decidió que la tensión aplicada a la bomba será limitada a \SI{3}{\volt}.
+De forma experimental se obtuvo que la bomba de agua tiene relativamente los mismos efectos cuando esta funciona a su voltaje nominal (\SI{24}{\volt}) que a un voltaje reducido de \SI{3}{\volt}. Por lo tanto, se decidió que la tensión aplicada a la bomba será limitada a \SI{3}{\volt}.
 
-Posteriormente, para evitar irregularidades, la señal $u(t)$ se limita al rango operativo de los actuadores, es decir, entre \SI{0}{\volt} y \SI{12}{\volt} para el ventilador y entre \SI{0}{\volt} para la bomba de agua. De esta forma, valores negativos de $u$, que concluirían en un intento de ''calentar'' el panel aplicando tensión negativa, se ajusta a \SI{0}{\volt} (apagado), mientras que valores superiores a \SI{12}{\volt} (asociados a un error que el sistema no es corregir) se limitan a \SI{12}{\volt} para el ventilador, y \SI{3}{\volt} para la bomba (máximo posible).
+Posteriormente, para evitar irregularidades, la señal $u(t)$ se limita al rango operativo de los actuadores, es decir, entre \SI{0}{\volt} y \SI{12}{\volt} para el ventilador y entre \SI{0}{\volt} para la bomba de agua. De esta forma, valores negativos de $u$, que concluirían en un intento de ''calentar'' el panel aplicando tensión negativa, se ajusta a \SI{0}{\volt} (apagado), mientras que valores superiores a \SI{12}{\volt} (asociados a un error que el sistema no es capaz corregir) se limitan a \SI{12}{\volt} para el ventilador, y \SI{3}{\volt} para la bomba (máximo posible).
 
 Esta estrategia híbrida permite mantener el circuito de agua activo con un consumo mucho más reducido, delegando la carga fuerte de disipación al ventilador solo cuando es necesario.
 
@@ -92,6 +118,7 @@ Para aplicar correctamente estas métricas, se efectuan los cálculos y medicion
 En dicho entorno se aplica un escalón en la referencia de temperatura ($Ref$) en la salida del controlador y se observa la respuesta del sistema.
 
 \subsubsection{Tiempo de subida ($T_r$)}
+
 Se define como el tiempo necesario para que la respuesta del sistema recorra del \SI{10}{\percent} al \SI{90}{\percent} de su variación total real. Dado que el sistema es sobreamortiguado y no oscila, esta métrica es el indicador principal de la velocidad de reacción térmica.
 \begin{equation}
     T_r = t_{90\%} - t_{10\%}
@@ -100,7 +127,7 @@ Se define como el tiempo necesario para que la respuesta del sistema recorra del
 \subsubsection{Tiempo de estabilización ($T_s$)}
 Corresponde al tiempo de asentamiento o llegada. Se define como el instante en que la temperatura entra por primera vez en una banda de tolerancia del \SI{1}{\percent} respecto al valor final alcanzado ($T_{final}$).
 \begin{equation}
-    T_s = \min \{ t \mid |T_p(t) - T_{final}| \leq 0.01 \cdot \Delta T_{total} \}
+    T_s = \min \{ t \mid |T_p(t) - T_\text{final}| \leq 0.01 \cdot \Delta T_\text{total}\}
 \end{equation}
 
 \subsubsection{Sobrepaso ($M_p$)}
@@ -117,17 +144,40 @@ Es la diferencia permanente entre la referencia deseada ($Ref$) y el valor real 
 
 \subsection{Energéticas (Consumo de Energía)}
 
-Para evaluar el desempeño energético del sistema con coontrolador implementado, es necesario cuantificar el consumo total de energía eléctrica por parte de los actuadores durante un ciclo operativo completo (un día simulado).
+Para evaluar el desempeño energético del sistema con controlador implementado, es necesario cuantificar el consumo total de energía eléctrica por parte de los actuadores durante un ciclo operativo completo (un día simulado).
 
-Si bien en el proyecto pasado se tomó un modelo específico de bomba de agua, y se tomó valores arbitrarios para el ventilador, en este proyecto se tomará una aproximación para la potencia consumida por cada actuador en función de la tensión aplicada a estos, asumiendo que la corriente consumida es proporcional a la tensión aplicada (modelo lineal simplificado).
+En el Proyecto~1 se tomó un modelo específico de bomba de agua, mientras que para el ventilador se tomaron valores arbitrarios, en este proyecto se tomará una aproximación para la potencia consumida por cada actuador en función de la tensión aplicada a estos asumiendo que la corriente consumida es proporcional a la tensión aplicada (modelo lineal simplificado), en consecuencia, la potencia instantánea será proporcional al cuadrado de la tensión. La energía total acumulada ($E_{total}$) se calcula integrando numéricamente estas potencias en el tiempo:
 
-\section{Escenarios de Simulación} \label{sec:escenarions-de-simulacion}
+\begin{equation}
+    E_{total} = \int_{0}^{T} \left( \frac{V_{bomb}(t)^2}{R_{bomb}} + \frac{V_{vent}(t)^2}{R_{vent}} \right) dt \quad [\si{\joule}]
+\end{equation}
+
+Donde $R_{bomb}$ y $R_{vent}$ son las resistencias equivalentes estimadas de los actuadores. Esta métrica penaliza el uso de voltajes altos, reflejando fielmente el costo operativo real.
+
+\begin{itemize}
+    \item $\mathbf{R_\text{vent}}$: Los ventiladores trabajan comunmente potencias entre \SI{5}{\watt} y \SI{15}{\watt}, para el ventilador se tomó una aproximación de \SI{12}{\watt} de potencia nomilan, de esta forma podemos realizar aproximaciones de la resistencia equivalente:
+          \begin{equation*}
+              P_\text{max, venr} = \frac{(V_\text{nom})^2}{R_\text{vent}} \implies \SI{12}{\watt} = \frac{(\SI{12}{\volt})^2}{R_\text{vent}} \implies \boxed{R_\text{vent} = \SI{12}{\ohm}}
+          \end{equation*}
+    \item $\mathbf{R_\text{bomb}}$: La bomba de agua utilizada corresponde a la bomba \textbf{\textit{Iwaki RD-20}} \Cite{datasheet_bomba}, la cual funciona a \SI{60}{\watt} a su tensión nominal de \SI{24}{\volt}, con estos datos se obtiene su resistencia equivalente:
+          \begin{equation*}
+              P_\text{max, bomb} = \frac{(V_\text{nom})^2}{R_\text{bomb}} \implies \SI{60}{\watt} = \frac{(\SI{24}{\watt})^2}{R_\text{bomb}} \implies \boxed{R_\text{bomb} = \frac{48}{5}~\si{\ohm}}
+          \end{equation*}
+\end{itemize}
+
+con estos valores será posible cuantificar la energía consumida por cada actuador sobre el sistema tanto en lazo abierto como cerrado.
+
+\section{Simulación}
+
+Para la resolución computacional de este sistema de ecuaciones diferenciales no lineales, se mantuvo el uso del solucionador \texttt{ode45} de MATLAB, el cual implementa un método de Runge-Kutta de orden 4(5) con paso adaptativo \cite{shampine1997matlab}, la versión de MATLAB utilizada fue la \textit{R2025b}.
+
+\subsection{Escenarios de Simulación} \label{subsec:escenarions-de-simulacion}
 
 Para evaluar el desempeño del sistema de control propuesto, se diseñaron diversos escenarios de simulación que replican condiciones operativas típicas y extremas. Estos escenarios corresponden a variaciones en la irradiancia solar y en la temperatura ambiente los cuales constituirán diferentes perfiles de carga térmica en el panel fotovoltaico.
 
 Todos los escenarios a continuación parten del mismo escenario de temperatura ambiente e irradiancia solar y velocidad del viento definidos en el proyecto anterior, el cual simula un día típico soleado y despejado.
 
-\subsection*{Escenario Base}
+\subsubsection*{Escenario Base}
 
 Esta configuración de perturbaciones fue desarrollado en el proyecto anterior resultando en las siguientes expresiones matemáticas asociadas a la temperatura ambiente, irradiancia solar y velocidad del viento:
 
@@ -163,7 +213,7 @@ Respecto a el uso de la velocidad del viento, esta se mantuvo igual para todos l
 
 A continuación se presentarán los ajustes aplicados a estas expresiones base para generar los diferentes escenarios de simulación.
 
-\subsection{Día Soleado}
+\subsubsection{Día Soleado}
 
 Este escenario corresponde directamente al caso base original usado en el proyecto anterior, los parámetros usados en las ecuaciones \ref{eq:temperatura-ambiente}, \ref{eq:irradiancia-solar} y son los siguientes:
 
@@ -188,7 +238,7 @@ Este escenario corresponde directamente al caso base original usado en el proyec
     \label{tab:valores-escenario-1}
 \end{table}
 
-\subsection{Día Nublado}
+\subsubsection{Día Nublado}
 
 En este escenario, para simular condiciones de nubosidad, se reduce significativamente la irradiancia solar incidente sobre el panel fotovoltaico. Para ello, se ajusta el valor máximo de irradiancia $G_\text{max}$ en la ecuación \ref{eq:irradiancia-solar} a un valor reducido de \SI{500}{\watt\per\meter\squared}, además se modifican algunos valores en la tabla \ref{tab:valores-escenario-1} para reflejar un día más frío y con menor temperatura máxima:
 
@@ -213,7 +263,7 @@ En este escenario, para simular condiciones de nubosidad, se reduce significativ
 \end{table}
 
 
-\subsection{Día Parcialmente Nublado (Intermitente)}
+\subsubsection{Día Parcialmente Nublado (Intermitente)}
 
 
 A diferencia de los escenarios anteriores que presentan variaciones lentas y continuas, el perfil intermitente (o parcialmente nublado) se construye para someter al controlador a perturbaciones de alta frecuencia. Este escenario se deriva del modelo base de día despejado aplicando dos mecanismos de transformación distintos, según la naturaleza física de la variable:
@@ -226,9 +276,9 @@ A diferencia de los escenarios anteriores que presentan variaciones lentas y con
 
 La formulación matemática detallada de estas funciones de perturbación, así como los parámetros temporales de periodicidad y factores de atenuación utilizados, se encuentran descritos en el Apéndice \ref{app:A} resultando en las siguientes expresiones para la generación de $G$ y $T_\text{amb}$:
 
-\subsection{Entorno Controlado para Análisis de Métricas} \label{subsecc:entorno-controlado}
+\subsubsection{Entorno Controlado para Análisis de Métricas} \label{subsecc:entorno-controlado}
 
-Para aplicar correctamente las métricas de desempeño temporal definidas en la sección anterior, se efectuan los cálculos y mediciones sobre un entorno de simulación controlada. Este entorno se caracteriza por mantener condiciones ambientales constantes durante el periodo de análisis, eliminando las variaciones diurnas y perturbaciones externas.
+Para aplicar correctamente las métricas de desempeño temporal definidas en la sección anterior, se efectúan los cálculos y mediciones sobre un entorno de simulación controlada. Este entorno se caracteriza por mantener condiciones ambientales constantes durante el periodo de análisis, eliminando las variaciones diurnas y perturbaciones externas.
 
 A continuación se detallan las condiciones específicas del entorno controlado:
 
@@ -240,9 +290,11 @@ A continuación se detallan las condiciones específicas del entorno controlado:
 
 En lo referente al escalón de referencia de temperatura ($Ref$), el sistema se inicia con condiciones iniciales de \SI{30}{\degreeCelsius} con una referencia de \SI{45}{\degreeCelsius} la cual se espera una hora hasta que los valores se estabilizan, posteriormente se produce un escalón de referencia establecido en \SI{55}{\degreeCelsius}, generando una variación de \SI{15}{\degreeCelsius} que permite observar la respuesta transitoria del sistema bajo condiciones controladas, aplicando las métricas definidas previamente.
 
-\section{Pruebas/Simulaciones a Realizar}
+\subsection{Pruebas/Simulaciones a Realizar}
 
 Con el fin de evaluar exhaustivamente el desempeño del sistema de control propuesto, se planifican las siguientes simulaciones y pruebas:
+
+
 
 \begin{itemize}
     \item \textbf{Simulación en Lazo Abierto:} Se ejecutará una simulación del sistema sin la implementación del controlador, aplicando las condiciones de los tres escenarios definidos (Día Soleado, Día Nublado, Día Parcialmente Nublado). El objetivo es caracterizar la respuesta natural del sistema y establecer una línea base para comparación.
@@ -251,6 +303,6 @@ Con el fin de evaluar exhaustivamente el desempeño del sistema de control propu
 
     \item \textbf{Simulación en Lazo Cerrado:} Se realizará una simulación con el controlador implementado, evaluando su desempeño bajo las mismas condiciones ambientales de los tres escenarios utilizados en las simulaciones en lazo abierto. Esto permitirá analizar la efectividad del controlador en la regulación de la temperatura.
 
-    \item \textbf{Simulación en Entorno Controlado:} Se llevará a cabo una simulación específica en el entorno controlado descrito en la sección \ref{subsecc:entorno-controlado}. Esta prueba se centrará en la evaluación de las métricas temporales de desempeño del sistema, permitiendo un análisis detallado.
+    \item \textbf{Simulación en Entorno Controlado:} Se llevará a cabo una simulación específica en el entorno controlado descrito en la Sección \ref{subsecc:entorno-controlado}. Esta prueba se centrará en la evaluación de las métricas temporales de desempeño del sistema, permitiendo un análisis sin la presencia de perturbaciones.
 
 \end{itemize}

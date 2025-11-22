@@ -1,1 +1,75 @@
-\chapter{Modelación de Escenario Intermitente} \label{app:A}
+\chapter{Modelado Matemático de Perturbaciones Intermitentes} \label{app:A}
+
+En este apéndice se detalla la formulación analítica utilizada para construir las señales de perturbación correspondientes al escenario de "Día Parcialmente Nublado" descrito en la Metodología.
+
+\section{Función de Irradiancia Solar}
+
+El perfil de irradiancia intermitente se modela como una modulación de la irradiancia base de cielo despejado ($G_{base}$), afectada por un coeficiente de transmitancia variable $\beta(t)$ que representa el bloqueo óptico de las nubes:
+
+\begin{equation}
+    G_{int}(t) = G_{base}(t) \cdot \beta(t)
+\end{equation}
+
+El coeficiente $\beta(t)$ resulta de la superposición de dos trenes de pulsos independientes, $\beta_1(t)$ y $\beta_2(t)$, que simulan diferentes tipos de formaciones nubosas:
+
+\begin{equation}
+    \beta(t) = \beta_1(t) \cdot \beta_2(t)
+\end{equation}
+
+Cada función $\beta_i(t)$ se define como una señal periódica rectangular utilizando la operación módulo para determinar los intervalos de oscurecimiento:
+
+\begin{equation}
+    \beta_i(t) =
+    \begin{cases}
+        \alpha_i & \text{si } \left( t \pmod{T_i} \right) < \Delta t_i \\
+        1        & \text{en otro caso}
+    \end{cases}
+\end{equation}
+
+
+
+Donde:
+\begin{itemize}
+    \item $T_i$: Periodo de recurrencia de la nube.
+    \item $\Delta t_i$: Duración del bloqueo solar.
+    \item $\alpha_i$: Factor de transmitancia (1 = transparente, 0 = opaco).
+\end{itemize}
+
+Los parámetros utilizados en la simulación para cada componente son:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Componente}       & \textbf{Periodo ($T$)} & \textbf{Duración ($\Delta t$)} & \textbf{Transmitancia ($\alpha$)} \\
+        \hline
+        Nube Densa ($\beta_1$)    & \qty{2.5}{h}           & \qty{25}{min}                  & 0.3                               \\
+        Nube Pasajera ($\beta_2$) & \qty{1.1}{h}           & \qty{8}{min}                   & 0.6                               \\
+        \hline
+    \end{tabular}
+    \caption{Parámetros de modulación para la irradiancia intermitente.}
+\end{table}
+
+\section{Función de Temperatura Ambiente con Inercia}
+
+A diferencia de la irradiancia, la temperatura del aire no cambia instantáneamente. Se modela mediante una reducción suave sobre la temperatura base ($T_{base}$), introduciendo una dinámica inercial:
+
+\begin{equation}
+    T_{amb, int}(t) = T_{base}(t) - \Delta T_{inercial}(t)
+\end{equation}
+
+El término de reducción $\Delta T_{inercial}(t)$ se activa únicamente durante las horas de sol y se calcula mediante una función cosenoidal desplazada en el tiempo:
+
+\begin{equation}
+    \Delta T_{inercial}(t) = \Delta T_{max} \cdot \left( \frac{\cos\left( \frac{2\pi}{T_1}(t - \tau) \right) + 1}{2} \right)
+\end{equation}
+
+Donde los parámetros físicos son:
+\begin{itemize}
+    \item $\Delta T_{max} = \qty{4}{\degreeCelsius}$: Máxima caída de temperatura del aire debido a la sombra.
+    \item $T_1 = \qty{2.5}{h}$: Frecuencia sincronizada con la nubosidad principal.
+    \item $\tau = \qty{45}{min}$: \textbf{Retardo por inercia térmica}. Representa el tiempo que tarda la masa de aire en enfriarse tras el bloqueo de la radiación solar.
+\end{itemize}
+
+Esta formulación asegura continuidad de clase $C^1$ en la variable de temperatura, evitando saltos abruptos no físicos en la simulación.
+
