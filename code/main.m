@@ -60,6 +60,51 @@ xlim([0, 24]); xticks(0:2:24);
 ylim([0, 60]);
 grid on;
 
+%% ========== OBJETIVO 6: ESTABILIDAD EN ESCENARIO REAL (DÍA DESPEJADO) ==========
+figure("Name", "Comparativa Kp - Día Despejado", "NumberTitle", "off");
+
+% --- Subplot 1: Temperaturas ---
+ax1 = subplot(1, 2, 1); hold on; grid on;
+ylabel("Temperatura Panel (°C)");
+xlabel("Hora del día");
+xlim([0 24]); ylim([0 60]);
+yline(55, 'k--', 'Límite 55°C', 'LabelHorizontalAlignment', 'left');
+
+% --- Subplot 2: Esfuerzo de Control ---
+ax2 = subplot(1, 2, 2); hold on; grid on;
+ylabel("Voltaje (V)");
+xlabel("Hora del día");
+xlim([0 24]); ylim([-1 13]);
+
+% Definición de perturbaciones
+f_amb = @(t) pert.temperatura_ambiente_despejado(t);
+f_irr = @(t) pert.irradiancia_solar_despejado(t);
+f_wind = @(t) pert.velocidad_viento(t);
+
+colores = lines(length(p.K_p));
+leyendas = strings(1, length(p.K_p));
+
+% === ARRAY PARA GUARDAR LOS OBJETOS DE LA GRÁFICA ===
+graficas = gobjects(1, length(p.K_p));
+
+for i = 1:length(p.K_p)
+    Kp_actual = p.K_p(i);
+
+    [t_sim, y_sim] = ode45(@(t,y) modelo(t,y,p, f_amb, f_irr, f_wind, 1, @(t)0, @(t)0, Kp_actual), tspan, y0);
+
+    T_panel = y_sim(:, 1) - 273.15;
+    u_calc = Kp_actual * (p.ref - y_sim(:,1)) + p.offset;
+    V_vent_plot = min(p.V_vent_MAX, max(u_calc, p.V_MIN));
+
+    % --- Graficamos Temp y GUARDAMOS EL IDENTIFICADOR en 'graficas(i)' ---
+    graficas(i) = plot(ax1, t_sim/3600, T_panel, 'LineWidth', 2, 'Color', colores(i,:));
+
+    % --- Graficamos Voltaje ---
+    plot(ax2, t_sim/3600, V_vent_plot, 'LineWidth', 1.5, 'Color', colores(i,:));
+
+    leyendas(i) = sprintf('Kp = %.1f', Kp_actual);
+end
+
 %% ========== STEP TEST (OBJETIVO 5) - CRITERIO "PRIMER TOQUE" ==========
 p_test = p;
 Kp_val = p_test.K_p(1);
@@ -149,49 +194,3 @@ for i=1:size(perfil_pert, 1)
 end
 
 
-%% ========== OBJETIVO 6: ESTABILIDAD EN ESCENARIO REAL (DÍA DESPEJADO) ==========
-figure("Name", "Comparativa Lazo Cerrado - Día Despejado", "NumberTitle", "off");
-
-% --- Subplot 1: Temperaturas ---
-ax1 = subplot(1, 2, 1); hold on; grid on;
-title("Respuesta de Temperatura ante diferentes Ganancias (Kp)");
-ylabel("Temperatura Panel (°C)");
-xlabel("Hora del día");
-xlim([0 24]); ylim([0 60]);
-yline(55, 'k--', 'Límite 55°C', 'LabelHorizontalAlignment', 'left');
-
-% --- Subplot 2: Esfuerzo de Control ---
-ax2 = subplot(1, 2, 2); hold on; grid on;
-title("Esfuerzo de Control (Voltaje Ventilador)");
-ylabel("Voltaje (V)");
-xlabel("Hora del día");
-xlim([0 24]); ylim([-1 13]);
-
-% Definición de perturbaciones
-f_amb = @(t) pert.temperatura_ambiente_despejado(t);
-f_irr = @(t) pert.irradiancia_solar_despejado(t);
-f_wind = @(t) pert.velocidad_viento(t);
-
-colores = lines(length(p.K_p));
-leyendas = strings(1, length(p.K_p));
-
-% === ARRAY PARA GUARDAR LOS OBJETOS DE LA GRÁFICA ===
-graficas = gobjects(1, length(p.K_p));
-
-for i = 1:length(p.K_p)
-    Kp_actual = p.K_p(i);
-
-    [t_sim, y_sim] = ode45(@(t,y) modelo(t,y,p, f_amb, f_irr, f_wind, 1, @(t)0, @(t)0, Kp_actual), tspan, y0);
-
-    T_panel = y_sim(:, 1) - 273.15;
-    u_calc = Kp_actual * (p.ref - y_sim(:,1)) + p.offset;
-    V_vent_plot = min(p.V_vent_MAX, max(u_calc, p.V_MIN));
-
-    % --- Graficamos Temp y GUARDAMOS EL IDENTIFICADOR en 'graficas(i)' ---
-    graficas(i) = plot(ax1, t_sim/3600, T_panel, 'LineWidth', 2, 'Color', colores(i,:));
-
-    % --- Graficamos Voltaje ---
-    plot(ax2, t_sim/3600, V_vent_plot, 'LineWidth', 1.5, 'Color', colores(i,:));
-
-    leyendas(i) = sprintf('Kp = %.1f', Kp_actual);
-end
