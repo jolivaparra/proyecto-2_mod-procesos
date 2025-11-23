@@ -19,10 +19,10 @@ if flag_lazo == 0
     % ---------- LAZO CERRADO ----------
 elseif flag_lazo == 1
     error = p.ref - T_p;
-    u_sin_limite = K_p * error + p.offset;
+    u = K_p * error + p.offset;
 
-    V_vent = min(p.V_vent_MAX, max(u_sin_limite, p.V_MIN));
-    V_bomb = min(p.V_bomb_suficiente, max(u_sin_limite, p.V_MIN));
+    V_vent = min(p.V_vent_MAX, max(u, p.V_MIN));
+    V_bomb = min(p.V_bomb_suficiente, max(u, p.V_MIN));
 
 end
 

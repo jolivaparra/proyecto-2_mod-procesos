@@ -60,7 +60,7 @@ Kp_val = p_test.K_p(1);
 % Parametros constantes para la prueba
 in_amb = @(t) 30; in_irr = @(t) 800; in_wind = @(t) 5.0;
 
-% --- FASE 1: Pre-estabilización (40°C) ---
+% --- FASE 1: Pre-estabilización (40°C) ---5
 p_test.ref = 40 + 273.15;
 [t1, y1] = ode45(@(t,y) modelo(t,y,p_test,in_amb,in_irr,in_wind,1,@(t)0,@(t)0,Kp_val), [0 3600], [303.15, 303.15]);
 
@@ -134,7 +134,7 @@ for i=1:size(perfil_pert, 1)
     irradiancia_solar = perfil_pert{i, 2};
     velocidad_viento = @(t) pert.velocidad_viento(t);
 
-    nombre_graf = nombre_perfiles(i) + " (Validación Kp=" + num2str(Kp_optimo) + ")";
+    nombre_graf = nombre_perfiles(i);
 
     graficos(nombre_graf, p, temperatura_ambiente, irradiancia_solar, ...
         velocidad_viento, 1, @(t) 0, @(t) 0, Kp_optimo);

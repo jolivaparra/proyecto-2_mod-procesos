@@ -34,13 +34,14 @@ p.k_vent = 3.5;         % [W/m^2K.V]
 
 p.sigma = 5.67e-8;
 
+p.R_vent = 12;
+p.R_bomb = 48/5;
 
-% Parámetros del controlador proporcional
-p.K_p = [-0.15, -0.5, -1.0, -2.0];  % Ganancias proporcionales a probar
+% Parámetros para el controlador proporcional
+p.K_p = [-0.25, -0.5, -1.0, -2.0];  % Ganancias a probar
 
 p.ref = 45 + 273.15;
 p.offset = 5;
-
 p.V_MIN = 0;
 p.V_vent_MAX = 12;
 p.V_bomb_suficiente = 3;
