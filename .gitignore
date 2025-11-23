@@ -1,11 +1,13 @@
-# Archivos de compilación de LaTeX comunes
-# -------------- PRESENTES ---------------
+#################################
+# 1. LATEX: ARCHIVOS DE COMPILACIÓN
+# Ignora todos los archivos auxiliares generados al compilar el PDF.
+#################################
 *.aux
 *.bbl
 *.bbl-SAVE-ERROR
 *.bcf
-*.bcf-SAVE-ERROR
 *.blg
+*.bcf-SAVE-ERROR
 *.fdb_latexmk
 *.fls
 *.lof
@@ -14,15 +16,12 @@
 *.out
 *.run.xml
 *.synctex.gz
-*.toc
 *.synctex(busy)
-# -----------------------------------------
-
-# --------------- Extras ------------------
+*.synctex.gz(busy)
+*.toc
 *.nav
 *.snm
 *.tdo
-*.gz
 *.thm
 *.upa
 *.spl
@@ -32,15 +31,60 @@
 *.idx
 *.ind
 *.ilg
-*.synctex.gz(busy)
+*.gz
+
+# Bloquear el archivo PDF final generado (opcional, pero recomendado)
+!report/figures/*.pdf
 
 
+#################################
+# 2. MATLAB / SIMULINK: CACHÉ & BINARIOS
+# Ignora archivos de preferencias, simulacion, y caché del entorno MATLAB.
+#################################
+# MATLAB Cache & Configuración
+*.prf
+*.mnc
+*.matlab
+*.asv
 
-# Ignorar el PDF de salida (Opcional, pero recomendado)
-main.pdf
+# Simulink
+*.sltx
+*.slxc
+*.p
+*.bak
 
-# Archivos de caché del sistema y editor
-# ----------------------------------------
+# Generados por informes/profiler
+code_coverage.html
+profile_output.html
+
+
+#################################
+# 3. DATOS, RESULTADOS & ARTEFACTOS
+# Ignora salidas binarias o archivos de datos grandes generados.
+#################################
+# Resultados de simulacion (pueden ser archivos grandes)
+*.mat
+
+# Archivos de figuras generadas por MATLAB (si se generan y no se exportan a PDF)
+*.fig
+
+# Archivos de proyectos (.prj) con rutas locales
+# Solo descomentar si quieres ignorar la configuración de proyectos:
+# *.prj
+
+
+#################################
+# 4. SISTEMA, EDITOR & TEMPORALES
+# Ignora archivos de caché del sistema operativo y backups de editores.
+#################################
+# Backups de editor (Vim, Emacs, etc.)
 *~
+
+# macOS
 .DS_Store
+
+# Windows
+Thumbs.db
+
+# VS Code / IDE
 .vscode/
