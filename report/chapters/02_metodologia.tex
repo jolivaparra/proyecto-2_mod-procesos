@@ -112,7 +112,7 @@ con $\displaystyle u(t) = K_c \cdot (Ref - T_p(t)) + \text{Offset}$
 
 A continuación se definen las métricas utilizadas para cuantificar el desempeño del sistema. Estas se calculan numéricamente a partir de los vectores de tiempo ($t$) y temperatura ($T_p$) obtenidos en la simulación.
 
-\subsection{Temporales (Respuesta Transitoria)}
+\subsection{Temporales}
 Para aplicar correctamente estas métricas, se efectuan los cálculos y mediciones sobre un entorno de simulación controlada, dicho entorno se caracteriza en la sección
 
 En dicho entorno se aplica un escalón en la referencia de temperatura ($Ref$) en la salida del controlador y se observa la respuesta del sistema.
@@ -149,7 +149,7 @@ Para evaluar el desempeño energético del sistema con controlador implementado,
 En el Proyecto~1 se tomó un modelo específico de bomba de agua, mientras que para el ventilador se tomaron valores arbitrarios, en este proyecto se tomará una aproximación para la potencia consumida por cada actuador en función de la tensión aplicada a estos asumiendo que la corriente consumida es proporcional a la tensión aplicada (modelo lineal simplificado), en consecuencia, la potencia instantánea será proporcional al cuadrado de la tensión. La energía total acumulada ($E_{total}$) se calcula integrando numéricamente estas potencias en el tiempo:
 
 \begin{equation}
-    E_{total} = \int_{0}^{T} \left( \frac{V_{bomb}(t)^2}{R_{bomb}} + \frac{V_{vent}(t)^2}{R_{vent}} \right) dt \quad [\si{\joule}]
+    E_{total}(t) = \int_{0}^{t} \left( \frac{V_{bomb}(\tau)^2}{R_{bomb}} + \frac{V_{vent}(\tau)^2}{R_{vent}} \right)\,d\tau \quad [\si{\joule}]
 \end{equation}
 
 Donde $R_{bomb}$ y $R_{vent}$ son las resistencias equivalentes estimadas de los actuadores. Esta métrica penaliza el uso de voltajes altos, reflejando fielmente el costo operativo real.
@@ -157,7 +157,7 @@ Donde $R_{bomb}$ y $R_{vent}$ son las resistencias equivalentes estimadas de los
 \begin{itemize}
     \item $\mathbf{R_\text{vent}}$: Los ventiladores trabajan comunmente potencias entre \SI{5}{\watt} y \SI{15}{\watt}, para el ventilador se tomó una aproximación de \SI{12}{\watt} de potencia nomilan, de esta forma podemos realizar aproximaciones de la resistencia equivalente:
           \begin{equation*}
-              P_\text{max, venr} = \frac{(V_\text{nom})^2}{R_\text{vent}} \implies \SI{12}{\watt} = \frac{(\SI{12}{\volt})^2}{R_\text{vent}} \implies \boxed{R_\text{vent} = \SI{12}{\ohm}}
+              P_\text{max, vent} = \frac{(V_\text{nom})^2}{R_\text{vent}} \implies \SI{12}{\watt} = \frac{(\SI{12}{\volt})^2}{R_\text{vent}} \implies \boxed{R_\text{vent} = \SI{12}{\ohm}}
           \end{equation*}
     \item $\mathbf{R_\text{bomb}}$: La bomba de agua utilizada corresponde a la bomba \textbf{\textit{Iwaki RD-20}} \Cite{datasheet_bomba}, la cual funciona a \SI{60}{\watt} a su tensión nominal de \SI{24}{\volt}, con estos datos se obtiene su resistencia equivalente:
           \begin{equation*}
