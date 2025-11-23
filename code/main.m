@@ -24,11 +24,15 @@ odefun_snrefr = @(t, y) modelo(t, y, p, ...
 [t_sr, y_sr] = ode45(odefun_snrefr, tspan, y0);
 T_p_sr = y_sr(:, 1) - 273.15;
 
+fprintf("Máx día desjepado sin refrigeración: %.2f\n", max(T_p_sr));
+
+
 figure("Name", "Sin Refrigeración", "NumberTitle", "off");
 plot(t_sr/3600, T_p_sr, "LineWidth", 2, "Color", "b");
 xlabel("Tiempo (h)"); ylabel("Temperatura (°C)");
 xlim([0, 24]); xticks(0:2:24);
 grid on;
+
 
 %% ========== LAZO ABIERTO (ESCALÓN)  ==========
 
@@ -47,8 +51,11 @@ odefun_la = @(t, y) modelo(t, y, p, ...
 [t_la, y_la] = ode45(odefun_la, tspan, y0);
 T_p_la = y_la(:, 1) - 273.15;
 
+fprintf("Máx día desjepado con entrada escalón (Lazo Abierto): %.2f\n", max(T_p_la));
+
 figure("Name", "Lazo Abierto", "NumberTitle", "off");
 plot(t_la/3600, T_p_la, "LineWidth", 2, "Color", "b");
+xlabel("Tiempo (h)"); ylabel("Temperatura (°C)");
 xlim([0, 24]); xticks(0:2:24);
 ylim([0, 60]);
 grid on;
@@ -94,7 +101,7 @@ Tr = t_90 - t_10;
 % --- IMPRIMIR Y GRAFICAR ---
 fprintf('\n--- RESULTADOS (Criterio: Primer Toque) ---\n');
 fprintf('Estable en: %.2f°C (ESS: %.2f°C)\n', T_final, ESS);
-fprintf('Tiempo de Llegada ("Estabilización"): %.1f s\n', Ts);
+fprintf('Tiempo de Llegada ("Estabilización"): %.1f s\n\n', Ts);
 
 figure("Name", "Step Test - Primer Toque", "NumberTitle", "off");
 % Grafico Temperatura
@@ -127,6 +134,8 @@ perfil_pert = {
     };
 
 Kp_optimo = p.K_p(1);
+
+fprintf("--- Max Temp con K_p:%.2f ---\n", Kp_optimo);
 
 for i=1:size(perfil_pert, 1)
     temperatura_ambiente = perfil_pert{i, 1};

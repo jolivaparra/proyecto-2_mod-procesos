@@ -22,6 +22,8 @@ odefun = @(t,y) modelo(t, y, p, ...
 [t, y] = ode45(odefun, tspan, y0);
 T_p = y(:, 1) - 273.15;
 
+fprintf("Escenario %s: %.2f\n", nombre, max(T_p));
+
 % Para graficar perturbaciones
 plot_temp_amb = arrayfun(@(t) temperatura_ambiente(t), t);
 plot_irr_sol = arrayfun(@(t) irradiancia_solar(t), t);
@@ -67,6 +69,7 @@ plot(t/3600, E_bomb, "LineWidth", 2, "Color", "r");
 plot(t/3600, E_total, "LineWidth", 2, "Color", "g");
 legend("E. consum. Ventilador", "E. consum. Bomba", "E. Total consum.", "Location", "northwest");
 xlim([0,24]); xticks(0:2:24);
+ylim([-0.001, 0.04]); yticks(0:0.01:0.04);
 xlabel("Tiempo (h)"); ylabel("Energía Consumida (kWh)");
 
 % ---------- Temperatura Ambiente ----------
