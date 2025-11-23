@@ -4,16 +4,15 @@
 
 Para dar cumplimiento al objetivo de visualizar la dinámica natural del proceso, se implementó un esquema de \textbf{Lazo Abierto} incorporando un generador de señal tipo escalón aplicado a las variables manipulables ($V_{bomb}, V_{vent}$).
 
-En esta prueba, el sistema es sometido a las perturbaciones estandarizadas del ``Día Soleado'' (irradiancia y temperatura ambiente variables descritas en la Sección \ref{subsec:escenarions-de-simulacion}), mientras que los actuadores son activados mediante una señal fija (escalón de tensión) durante las horas de operación, sin recibir retroalimentación de la temperatura real del panel.
+En esta prueba, el sistema es sometido a las perturbaciones estandarizadas del ``Día Soleado'' (irradiancia y temperatura ambiente variables descritas en la Sección \ref{subsec:escenarions-de-simulacion}), mientras que los actuadores son activados mediante una señal fija (escalón de tensión) durante las horas de operación, sin recibir retroalimentación de la temperatura real del panel. Esta simulación fue la más efectiva en reducción de la temperatura del panel respecto a las entradas utilizadas en el Proyecto 1 \cite{proyecto1}.
 
-La Figura \ref{fig:res:lazo_abierto} muestra la respuesta temporal obtenida bajo estas condiciones.
+La Figura~\ref{fig:plot:lazo_abierto} muestra la respuesta temporal obtenida bajo estas condiciones.
 
 \begin{figure}[H]
     \centering
-    % Asegúrate de que el nombre del archivo coincida con tu imagen guardada
-    % \includegraphics[width=0.9\textwidth]{figures/resultados/lazo_abierto_escalon.png}
+    \includegraphics[width=1\textwidth]{plots/temp-panel-actuadores-sin-control.pdf}
     \caption{Respuesta dinámica del sistema en Lazo Abierto ante una entrada tipo escalón en horas de mayor carga térmica con perturbaciones de día despejado.}
-    \label{fig:res:lazo_abierto}
+    \label{fig:plot:lazo_abierto}
 \end{figure}
 
 \subsection*{Análisis de la Respuesta Dinámica}
@@ -21,14 +20,16 @@ La Figura \ref{fig:res:lazo_abierto} muestra la respuesta temporal obtenida bajo
 Del comportamiento observado en la gráfica, se desprenden las siguientes conclusiones sobre la planta:
 
 \begin{enumerate}
-    \item \textbf{Capacidad de Enfriamiento Suficiente:} Se observa que, al aplicar la señal de control fija (máxima capacidad), la temperatura máxima alcanzada es de aproximadamente \SI{53}{\degreeCelsius}. Este valor se encuentra por debajo del límite crítico de seguridad (\SI{55}{\degreeCelsius}), lo que indica que los actuadores dimensionados tienen la capacidad física suficiente para disipar la carga térmica máxima del sistema si operan a plena potencia.
+    \item \textbf{Capacidad de Enfriamiento Suficiente:} Se observa que, al aplicar la señal de control fija (máxima capacidad), la temperatura máxima alcanzada es de aproximadamente \SI{51}{\degreeCelsius}. Este valor se encuentra por debajo del límite crítico de seguridad (\SI{55}{\degreeCelsius}) definido en las especificaciones de respuesta, lo que indica que los actuadores dimensionados tienen la capacidad física suficiente para disipar la carga térmica máxima del sistema si operan a plena potencia.
 
-    \item \textbf{Dependencia de las Perturbaciones (El Desafío de Regulación):} A pesar de que la temperatura se mantiene en rangos seguros, la curva de salida sigue la forma de la irradiancia solar (sube al mediodía y baja al atardecer). Esto evidencia que, en lazo abierto, el sistema es incapaz de rechazar perturbaciones completamente; la temperatura flota libremente en función del clima, sin mantener un punto de operación constante (Set-Point).
+    \item \textbf{Dependencia de las Perturbaciones:} A pesar de que la temperatura se mantiene en rangos seguros, la curva de salida sigue parcialmente la forma de la irradiancia solar (sube al mediodía y baja al atardecer). Esto evidencia que, en lazo abierto, el sistema es incapaz de rechazar perturbaciones completamente debido a la magnitud de la inercia térmica del ambiente, por lo cual la temperatura flota libremente en función del clima, sin mantener un punto de operación constante (Set-Point) debido al escalón.
+
+    \item \textbf{Descenso Drástico de Temperatura en Activación:} Al momento de la activación del sistema el panel sufre un descenso de temperatura cercano a \qty{10}{\degreeCelsius}, esto en el día a día conlleva un estrés térmico constante a los materiales del panel reduciendo su vida útil.
 
     \item \textbf{Ineficiencia Energética (El Desafío de Consumo):} La señal escalón implica que los actuadores están operando a un nivel de tensión constante incluso en momentos donde la carga térmica es baja (mañana y tarde). Esto representa un desperdicio de energía significativo, ya que se está aplicando un esfuerzo de enfriamiento máximo cuando no es estrictamente necesario.
 \end{enumerate}
 
-\textbf{Conclusión:} Si bien la operación en lazo abierto puede satisfacer el requisito de seguridad térmica bajo estas condiciones ($\approx \SI{53}{\degreeCelsius}$), carece de capacidad de regulación y eficiencia. Esto justifica la implementación de una estrategia de control en \textbf{Lazo Cerrado} que module el esfuerzo de los actuadores para mantener la temperatura estable y minimizar el consumo.
+\paragraph{Conclusión} Si bien la operación en lazo abierto puede satisfacer el requisito de seguridad térmica bajo estas condiciones ($\approx \SI{51}{\degreeCelsius}$), carece de capacidad de regulación y eficiencia. Esto justifica la implementación de una estrategia de control en \textbf{Lazo Cerrado} que module el esfuerzo de los actuadores para mantener la temperatura estable y minimizar el consumo.
 
 \section{Sintonización de la Ganancia del Controlador}
 
