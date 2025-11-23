@@ -26,7 +26,7 @@ T_p_sr = y_sr(:, 1) - 273.15;
 
 figure("Name", "Sin Refrigeración", "NumberTitle", "off");
 plot(t_sr/3600, T_p_sr, "LineWidth", 2, "Color", "b");
-title("Temperatura del Panel, sin uso de refrigeración");
+xlabel("Tiempo (h)"); ylabel("Temperatura (°C)");
 xlim([0, 24]); xticks(0:2:24);
 grid on;
 
@@ -49,7 +49,6 @@ T_p_la = y_la(:, 1) - 273.15;
 
 figure("Name", "Lazo Abierto", "NumberTitle", "off");
 plot(t_la/3600, T_p_la, "LineWidth", 2, "Color", "b");
-title("Temperatura del Panel: Control en Lazo Abierto (Escalón)");
 xlim([0, 24]); xticks(0:2:24);
 ylim([0, 60]);
 grid on;
