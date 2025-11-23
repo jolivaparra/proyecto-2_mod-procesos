@@ -31,7 +31,39 @@ Del comportamiento observado en la gráfica, se desprenden las siguientes conclu
 
 \paragraph{Conclusión} Si bien la operación en lazo abierto puede satisfacer el requisito de seguridad térmica bajo estas condiciones ($\approx \SI{51}{\degreeCelsius}$), carece de capacidad de regulación y eficiencia. Esto justifica la implementación de una estrategia de control en \textbf{Lazo Cerrado} que module el esfuerzo de los actuadores para mantener la temperatura estable y minimizar el consumo.
 
-\section{Sintonización de la Ganancia del Controlador}
+\section{Análisis de Estabilidad y Sintonización del Controlador}
+
+Una vez caracterizada la planta, se procedió al diseño del controlador en lazo cerrado. Para determinar la ganancia proporcional ($K_c$) adecuada, se realizó un análisis de sensibilidad sometiendo al sistema al escenario de carga máxima (Día Soleado) variando la magnitud de la ganancia en el conjunto de valores $\{-0.25, -0.5, -1.0, -2.0\}$, junto con un valor de referencia para el controlador de $Ref = \qty{45}{\degreeCelsius}$ y un valor de Offset de \qty{5}{\volt}.
+
+El objetivo de esta comparativa es encontrar el compromiso óptimo entre la velocidad de reducción de temperatura y la estabilidad de la señal de control enviada a los actuadores.
+
+La Figura~\ref{fig:res:comparativa_kp} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
+
+\begin{figure}[H]
+    \sloppy
+    \centering
+    \includegraphics[width=1\textwidth]{plots/comparativa-Kp.pdf}
+    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ asociado. \\
+        \textbf{(a)} Temperatura (\si{\celsius}) del panel solar.\\
+        \textbf{(b)} Detalla la tensión (\si{\volt}) aplicado en cada actuador.}
+    \label{fig:res:comparativa_kp}
+\end{figure}
+
+\subsection*{Análisis de Resultados de Sintonía}
+
+A partir de la visualización del comportamiento dinámico, se observan dos fenómenos contrapuestos:
+
+\begin{enumerate}
+    \item \textbf{Comportamiento con Altas Ganancias ($K_c = -1.0, -2.0$):}
+          Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:res:comparativa_kp} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
+          Este fenómeno provoca cambios bruscos en la velocidad del ventilador, lo cual es indeseable mecánicamente y no se traduce en una mejora térmica significativa debido a la lenta inercia térmica del agua.
+
+    \item \textbf{Comportamiento con Bajas Ganancias ($K_c = -0.25$):}
+          Con una ganancia conservadora de $-0.25$, la respuesta de temperatura es más suave y libre de oscilaciones. Aunque presenta temperatura máxima ligeramente mayor a los demás, logra mantener la temperatura por debajo del límite de seguridad de \SI{55}{\degreeCelsius}.
+          Lo más relevante es que la señal de control (Voltaje) evoluciona suavemente, siguiendo la curva de irradiancia sin saltos abruptos, lo que maximiza la vida útil de los actuadores y de los materiales del panel solar.
+\end{enumerate}
+
+\paragraph{Selección de Parámetros} Basado en este análisis, se selecciona $K_c = -0.25$ como la ganancia definitiva para el controlador. Esta sintonía prioriza la robustez y la suavidad de la actuación por sobre la velocidad de respuesta, dado que el sistema térmico es inherentemente lento y el criterio principal es la seguridad operativa ($T < \SI{55}{\degreeCelsius}$) junto a la eficiencia energética más que la precisión de seguimiento al Offset fijado.
 
 \section{Evaluación de Desempeño Transitorio}
 
