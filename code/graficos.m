@@ -46,7 +46,7 @@ figure("Name", ("Temperatura: "+ nombre), "NumberTitle", "off");
 plot(t/3600, T_p);
 xlim([0,24]); xticks(0:2:24);
 ylim([0, 60]);
-xlabel("Tiempo (h)"); ylabel("Temperatura (°C)");
+xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
 grid on;
 
 % ---------- Voltajes Ventilador/Bomba ----------
@@ -58,7 +58,7 @@ plot(t/3600, salida_bomb, "LineStyle", "-.", "LineWidth", 2, "Color", "r");
 legend("V. Ventilador", "V. Bomba", "Location", "northwest");
 xlim([0,24]); xticks(0:2:24);
 ylim([-1, 13]);
-xlabel("Tiempo (h)"); ylabel("Voltaje (V)");
+xlabel("Hora del día (hrs)"); ylabel("Voltaje (V)");
 hold off;
 
 % ---------- Energía Consumida ----------
@@ -70,7 +70,7 @@ plot(t/3600, E_total, "LineWidth", 2, "Color", "g");
 legend("E. consum. Ventilador", "E. consum. Bomba", "E. Total consum.", "Location", "northwest");
 xlim([0,24]); xticks(0:2:24);
 ylim([-0.001, 0.04]); yticks(0:0.01:0.04);
-xlabel("Tiempo (h)"); ylabel("Energía Consumida (kWh)");
+xlabel("Hora del día (hrs)"); ylabel("Energía Consumida (kWh)");
 
 % ---------- Temperatura Ambiente ----------
 figure("Name", ("Perturbaciones: "+ nombre), "NumberTitle", "off");
@@ -78,7 +78,7 @@ subplot(1, 2, 1);
 plot(t/3600, plot_temp_amb, "LineWidth", 1, "Color", "g");
 xlim([0,24]); xticks(0:2:24);
 ylim([0, 40]);
-xlabel("Tiempo (h)"); ylabel("Temperatura (°C)");
+xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
 grid on;
 
 % ---------- Irradiancia Solar ----------
@@ -86,7 +86,7 @@ subplot(1, 2, 2);
 plot(t/3600, plot_irr_sol, "LineWidth", 1, "Color", "y");
 xlim([0,24]); xticks(0:2:24);
 ylim([-100, 1100]);
-xlabel("Tiempo (h)"); ylabel("Irradiancia (W/m^2)");
+xlabel("Hora del día (hrs)"); ylabel("Irradiancia (W/m^2)");
 grid on;
 
 end
