@@ -8,7 +8,7 @@ El resultado de dicha etapa fue un sistema de Ecuaciones Diferenciales Ordinaria
 
 La eficiencia de conversión eléctrica de los paneles fotovoltaicos es sensible a la temperatura, cada grado sobre su temperatura de operación (\SI{25}{\degreeCelsius}) disminuye su rendimiento ligeramente. Sin un mecanismo de regulación activo, el panel queda expuesto a las variaciones estocásticas de la irradiancia solar y la temperatura ambiente.
 
-El análisis preliminar del sistema (simulaciones en lazo abierto sin intervención de control) revela que, bajo condiciones de alta carga térmica, el panel tiende a alcanzar temperaturas de equilibrio cercanas a los \SI{71}{\degreeCelsius}. Este comportamiento supera ampliamente su estandar de operación, conllevando dos riesgos:
+El análisis preliminar del sistema (simulaciones en lazo abierto sin refrigeración) revela que, bajo condiciones de alta carga térmica, el panel tiende a alcanzar temperaturas de equilibrio cercanas a los \SI{71}{\degreeCelsius}. Este comportamiento supera ampliamente su estandar de operación, conllevando dos riesgos:
 \begin{enumerate}
     \item Degradación acelerada de los materiales por estrés térmico.
     \item Pérdida de potencia útil generada.
@@ -45,7 +45,7 @@ Para dar cumplimiento a las especificaciones anteriores, se plantean las siguien
 \begin{itemize}
     \item Analizar el comportamiento dinámico en \textbf{lazo abierto} (ante entradas tipo escalón) para establecer la línea base de temperatura sin intervención.
     \item Programar un algoritmo de control Proporcional (P) a aplicar a las entradas manipulables.
-    \item Sintonizar la ganancia ($K_c$) y el punto de operación (Offset) para eliminar oscilaciones y asegurar el límite térmico.
+    \item Sintonizar la ganancia ($K_c$) y el punto de operación (Offset) mediante variaciones de esta misma con el objetivo de reducir oscilaciones y asegurar el límite térmico.
     \item Evaluar cuantitativamente el desempeño del controlador mediante métricas de respuesta al escalón de referencia (sobrepaso, tiempo de estabilización y error de estado estacionario).
     \item Verificar la robustez del sistema simulando su comportamiento ante perfiles de perturbaciones realistas (días nublados e intermitentes).
 \end{itemize}
