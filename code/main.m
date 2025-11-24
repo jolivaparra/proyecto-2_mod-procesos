@@ -65,7 +65,6 @@ figure("Name", "Comparativa Kp - Día Despejado", "NumberTitle", "off");
 
 % --- Subplot 1: Temperaturas ---
 ax1 = subplot(1, 2, 1); hold on; grid on;
-text(0.05, 0.95, '(a)', 'Units', 'Normalized', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel("Temperatura Panel (°C)");
 xlabel("Hora del día (hrs)");
 xlim([0 24]); ylim([0 60]);
@@ -73,7 +72,6 @@ yline(55, 'k--', 'Límite 55°C', 'LabelHorizontalAlignment', 'right');
 
 % --- Subplot 2: Esfuerzo de Control ---
 ax2 = subplot(1, 2, 2); hold on; grid on;
-text(0.05, 0.95, '(b)', 'Units', 'Normalized', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel("Voltaje (V)");
 xlabel("Hora del día (hrs)");
 xlim([0 24]); ylim([-1 13]);
@@ -156,20 +154,20 @@ Tr = t_90 - t_10;
 % --- IMPRIMIR Y GRAFICAR ---
 fprintf('\n--- RESULTADOS (Criterio: Primer Toque) ---\n');
 fprintf('Estable en: %.2f°C (ESS: %.2f°C)\n', T_final, ESS);
+fprintf("Sobrepaso: %.2f\n", Sobrepaso);
 fprintf('Tiempo de Llegada ("Estabilización"): %.1f s\n\n', Ts);
 
 figure("Name", "Step Test - Primer Toque", "NumberTitle", "off");
 % Grafico Temperatura
 subplot(1,2,1); plot(t_total/3600, T_total, 'b', 'LineWidth', 2); grid on; hold on;
-yline(55, 'r--', 'Ref 55'); yline(T_final, 'k-.', 'Final Real');
+yline(55, 'r--', 'Ref 55'); yline(45, 'r--', "Ref 45");
+yline(T_final, 'k-.', 'Final Real');
 xline((3600+Ts)/3600, 'g-', 'Llegada'); % Línea verde marca el momento exacto
-title(sprintf('Tiempo hasta tocar valor final: %.1fs', Ts));
 xlim([0 2]); ylim([35 60]); xlabel('Tiempo (h)'); ylabel('Temperatura Panel (°C)');
 
 % Grafico Voltaje (Calculado al vuelo para ahorrar código)
 u = Kp_val * ((t_total>=3600).*(55+273.15) + (t_total<3600).*(40+273.15) - (T_total+273.15)) + p.offset;
 subplot(1,2,2); plot(t_total/3600, min(12, max(0, u)), 'b'); grid on;
-title('Voltaje Ventilador');
 xlim([0 2]); xlabel('Tiempo (h)');
 ylabel('Voltaje (V)'); ylim([-1 13]);
 
