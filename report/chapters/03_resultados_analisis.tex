@@ -4,7 +4,7 @@
 
 Para dar cumplimiento al objetivo de visualizar la dinámica natural del proceso, se implementó un esquema de \textbf{Lazo Abierto} incorporando un generador de señal tipo escalón aplicado a las variables manipulables ($V_{bomb}, V_{vent}$).
 
-En esta prueba, el sistema es sometido a las perturbaciones estandarizadas del ``Día Soleado'' (irradiancia y temperatura ambiente variables descritas en la Sección \ref{ssec:escenarions-de-simulacion}), mientras que los actuadores son activados mediante una señal fija (escalón de tensión) durante las horas de operación, sin recibir retroalimentación de la temperatura real del panel. Esta simulación fue la más efectiva en reducción de la temperatura del panel respecto a las entradas utilizadas en el Proyecto 1 \cite{proyecto1}.
+En esta prueba, el sistema es sometido a las perturbaciones estandarizadas del ``Día Soleado'' (irradiancia y temperatura ambiente variables descritas en la Sección \ref{ssec:escenarios-de-simulacion}), mientras que los actuadores son activados mediante una señal fija (escalón de tensión) durante las horas de operación, sin recibir retroalimentación de la temperatura real del panel. Esta simulación fue la más efectiva en reducción de la temperatura del panel respecto a las entradas utilizadas en el Proyecto 1 \cite{proyecto1}.
 
 La Figura~\ref{fig:plot:lazo_abierto} muestra la respuesta temporal obtenida bajo estas condiciones.
 
@@ -108,7 +108,7 @@ La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del si
     \label{fig:plot:entorno-controlado}
 \end{figure}
 
-A partir de esta respuesta, se calcularon las métricas de desempeño definidas en la metodología. Los resultados se presentan en la Tabla~\ref{tab:res:metricas}.
+A partir de esta respuesta, se calcularon las métricas de desempeño definidas en la metodología. Los resultados se presentan en la Tabla~\ref{tab:metricas}.
 
 \begin{table}[H]
     \centering
@@ -116,18 +116,34 @@ A partir de esta respuesta, se calcularon las métricas de desempeño definidas 
         \hline
         \textbf{Métrica}               & \textbf{Símbolo} & \textbf{Valor Obtenido}    \\
         \hline
-        Tiempo de Subida               & $T_r$            & \qty{29.1}{\minute}        \\
-        Tiempo de Estabilización (1\%) & $T_s$            & [VALOR] \si{\second}       \\
-        Sobrepaso Máximo               & $M_p$            & \qty{0.11}{\degreeCelsius} \\
-        Error de Estado Estacionario   & $e_{ss}$         & \qty{5.53}{\degreeCelsius} \\
+        Tiempo de Subida               & $T_r$            & \qty{16.81}{\minute}       \\
+        Tiempo de Estabilización (1\%) & $T_s$            & \qty{21.56}{\minute}       \\
+        Sobrepaso Máximo               & $M_p$            & \qty{0.13}{\degreeCelsius} \\
+        Error de Estado Estacionario   & $e_{ss}$         & \qty{5.54}{\degreeCelsius} \\
         \hline
     \end{tabular}
     \caption{Resumen de métricas de desempeño temporal para $K_c = -0.25$.}
-    \label{tab:res:metricas}
+    \label{tab:metricas}
 \end{table}
+
+\subsection*{Análisis de Desempeño}
+
+A partir de los datos obtenidos en la Tabla~\ref{tab:metricas}, se desprenden las siguientes conclusiones técnicas sobre la calidad del control implementado:
+
+\begin{enumerate}
+    \item \textbf{Respuesta Subamortiguada con Oscilación Residual:}
+          Se registra un sobrepaso máximo de \qty{0.13}{\degreeCelsius} y una oscilación sostenida de baja amplitud en torno al valor final. Esto clasifica el comportamiento como \textbf{subamortiguado}.
+          Si bien existe oscilación perpetua (ciclo límite), su amplitud es marginal ($< 0.3\%$ de la referencia). En términos prácticos, esta magnitud es despreciable frente a la inercia térmica del panel y no representa un riesgo de fatiga mecánica para los actuadores ni estrés térmico para el material.
+
+    \item \textbf{Dinámica Temporal ($T_r, T_s$):}
+          Los tiempos de respuesta (subida en $\approx \qty{17}{\minute}$ y estabilización en $\approx \qty{22}{\minute}$) confirman la alta inercia térmica de la masa de agua. El controlador respeta la dinámica natural de la planta sin forzar una actuación agresiva que podría saturar innecesariamente la bomba, logrando un compromiso adecuado entre velocidad de enfriamiento y suavidad operativa.
+
+    \item \textbf{Margen de Seguridad Pasivo ($e_{ss}$):}
+          Se observa un Error de Estado Estacionario de \qty{5.54}{\degreeCelsius}. Al utilizar un controlador Proporcional sin acción integral, este error es matemáticamente esperado.
+          Es fundamental notar la dirección del error: la temperatura se estabiliza en $\approx \qty{49.5}{\degreeCelsius}$ para una referencia de \qty{55}{\degreeCelsius}. Esto actúa como un \textbf{margen de seguridad} de casi \qty{6}{\degreeCelsius} a favor del sistema, garantizando que la temperatura operativa se mantenga lejos del límite crítico de degradación.
+\end{enumerate}
 
 \section{Validación ante Escenarios de Perturbación Dinámica}
 
 \section{Análisis de la Eficiencia Energética}
-
 

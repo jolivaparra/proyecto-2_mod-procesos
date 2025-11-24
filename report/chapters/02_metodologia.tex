@@ -171,7 +171,7 @@ con estos valores será posible cuantificar la energía consumida por cada actua
 
 Para la resolución computacional de este sistema de ecuaciones diferenciales no lineales, se mantuvo el uso del solucionador \texttt{ode45} de MATLAB, el cual implementa un método de Runge-Kutta de orden 4(5) con paso adaptativo \cite{shampine1997matlab}, la versión de MATLAB utilizada fue la \textit{R2025b}.
 
-\subsection{Escenarios de Simulación} \label{ssec:escenarions-de-simulacion}
+\subsection{Escenarios de Simulación} \label{ssec:escenarios-de-simulacion}
 
 Para evaluar el desempeño del sistema de control propuesto, se diseñaron diversos escenarios de simulación que replican condiciones operativas típicas y extremas. Estos escenarios corresponden a variaciones en la irradiancia solar y en la temperatura ambiente los cuales constituirán diferentes perfiles de carga térmica en el panel fotovoltaico.
 
@@ -303,6 +303,8 @@ Con el fin de evaluar exhaustivamente el desempeño del sistema de control propu
 
     \item \textbf{Simulación en Lazo Cerrado:} Se realizará una simulación con el controlador implementado, evaluando su desempeño bajo las mismas condiciones ambientales de los tres escenarios utilizados en las simulaciones en lazo abierto. Esto permitirá analizar la efectividad del controlador en la regulación de la temperatura.
 
-    \item \textbf{Simulación en Entorno Controlado:} Se llevará a cabo una simulación específica en el entorno controlado descrito en la Sección \ref{ssec:escenarions-de-simulacion}. Esta prueba se centrará en la evaluación de las métricas temporales de desempeño del sistema, permitiendo un análisis sin la presencia de perturbaciones.
+    \item \textbf{Simulación en Entorno Controlado:} Se llevará a cabo una simulación específica en el entorno controlado descrito en la Sección \ref{ssec:escenarios-de-simulacion}. Esta prueba se centrará en la evaluación de las métricas temporales de desempeño del sistema, permitiendo un análisis sin la presencia de perturbaciones.
 
 \end{itemize}
+
+BSFI

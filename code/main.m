@@ -171,7 +171,7 @@ Sobrepaso = max(T_fase2) - T_final_real;
 fprintf('\n--- RESULTADOS STEP TEST ---\n');
 fprintf('Centro Oscilación: %.4f°C\n', T_final_real);
 fprintf('Banda (5%%): +/- %.4f°C\n', banda);
-fprintf('Ts: %.1f s | Tr: %.1f s | ESS: %.2f °C\n\n', Ts, Tr, ESS);
+fprintf('Ts: %.1f s | Tr: %.1f s | ESS: %.2f °C | Sobrepaso: %.2f\n\n', Ts, Tr, ESS, Sobrepaso);
 
 % --- GRÁFICOS FINAL ---
 figure("Name", "Step Test - Métricas", "NumberTitle", "off");
@@ -189,14 +189,14 @@ yline(T_final_real - banda, 'Color', [0 0.5 0], 'LineStyle', '--', 'LineWidth', 
 % Línea de Tiempo de Estabilización
 if Ts > 0
     % (3600 + Ts) porque el escalón empieza en la hora 1
-    xline((3600+Ts)/3600, 'm-', sprintf('Ts=%.0fs', Ts), 'LineWidth', 2);
     xline((3600+Tr)/3600, 'm-', sprintf('Tr=%.0fs', Ts), 'LineWidth', 2, 'LabelVerticalAlignment', 'bottom', 'Color', 'b');
+    xline((3600+Ts)/3600, 'm-', sprintf('Ts=%.0fs', Ts), 'LineWidth', 2);
 end
 
 title("Respuesta Transitoria");
 xlim([0 2]);
 ylim([40 57.5]);
-xlabel('Tiempo (h)'); ylabel('Temperatura (°C)');
+xlabel('Tiempo (h)'); ylabel('Temperatura del Panel (°C)');
 
 % Subplot 2: Esfuerzo de Control
 subplot(1,2,2);
