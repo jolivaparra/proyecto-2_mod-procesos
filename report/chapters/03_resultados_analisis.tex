@@ -37,25 +37,36 @@ Una vez caracterizada la planta, se procedió al diseño del controlador en lazo
 
 El objetivo de esta comparativa es encontrar el compromiso óptimo entre la velocidad de reducción de temperatura y la estabilidad de la señal de control enviada a los actuadores.
 
-La Figura~\ref{fig:res:comparativa_kp} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
+La Figura~\ref{fig:plot:comparativa-kp} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
 
 \begin{figure}[H]
-    \sloppy
     \centering
-    \includegraphics[width=1\textwidth]{plots/comparativa-Kp.pdf}
-    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ asociado. \\
-        \textbf{(a)} Temperatura (\si{\celsius}) del panel solar.\\
-        \textbf{(b)} Detalla la tensión (\si{\volt}) aplicado en cada actuador.}
-    \label{fig:res:comparativa_kp}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
+        \caption{Temperatura (\si{\degreeCelsius}) del panel solar.}
+        \label{fig:plot:comparativa-kp-a}
+    \end{subfigure}
+    \hfil
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
+        \caption{Tensión (\si{\volt}) aplicada en cada actuador.}
+        \label{fig:plot:comparativa-kp-b}
+    \end{subfigure}
+    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ señalado.}
+    \label{fig:plot:comparativa-kp}
 \end{figure}
 
-\subsection*{Análisis de Resultados de Sintonía}
+% \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ asociado. \\
+%         \textbf{(a)} Temperatura (\si{\celsius}) del panel solar.\\
+%         \textbf{(b)} Detalla la tensión (\si{\volt}) aplicado en cada actuador.}
+%     \label{fig:res:comparativa_kp}
+% \subsection*{Análisis de Resultados de Sintonía}
 
 A partir de la visualización del comportamiento dinámico, se observan dos fenómenos contrapuestos:
 
 \begin{enumerate}
     \item \textbf{Comportamiento con Altas Ganancias ($K_c = -1.0, -2.0$):}
-          Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:res:comparativa_kp} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
+          Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:plot:comparativa-kp-b} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
           Este fenómeno provoca cambios bruscos en la velocidad del ventilador, lo cual es indeseable mecánicamente y no se traduce en una mejora térmica significativa debido a la lenta inercia térmica del agua.
 
     \item \textbf{Comportamiento con Bajas Ganancias ($K_c = -0.25$):}
@@ -66,6 +77,54 @@ A partir de la visualización del comportamiento dinámico, se observan dos fen�
 \paragraph{Selección de Parámetros} Basado en este análisis, se selecciona $K_c = -0.25$ como la ganancia definitiva para el controlador. Esta sintonía prioriza la robustez y la suavidad de la actuación por sobre la velocidad de respuesta, dado que el sistema térmico es inherentemente lento y el criterio principal es la seguridad operativa ($T < \SI{55}{\degreeCelsius}$) junto a la eficiencia energética más que la precisión de seguimiento al Offset fijado.
 
 \section{Evaluación de Desempeño Transitorio}
+
+Habiendo seleccionado la ganancia definitiva ($K_c = -0.25$), se procede a cuantificar el desempeño dinámico del sistema mediante las métricas definidas en la Sección~\ref{sec:metricas}. Cabe aclarar que este análisis no fué posible realizarlo en la etapa de sintonización debido a la presencia de perturbaciones variables (irradiancia y temperatura ambiente) que distorsionan la respuesta natural del sistema.
+
+La evaluación se realiza bajo el \textbf{Entorno Controlado} descrito en la Sección~\ref{sssec:entorno-controlado}, el cual aísla el sistema de perturbaciones variables manteniendo condiciones constantes: irradiancia solar de \qty{800}{\watt\per\meter\squared}, temperatura ambiente de \qty{30}{\degreeCelsius} y velocidad del viento de \qty{5}{\meter\per\second}.
+
+El protocolo de prueba consiste en una secuencia de dos etapas:
+\begin{enumerate}
+    \item \textbf{Pre-estabilización:} Se inicia la simulación con el panel a temperatura ambiente (\qty{30}{\degreeCelsius}) y el controlador operando con una referencia inicial de $Ref = \qty{45}{\degreeCelsius}$. Se permite que el sistema evolucione durante una hora ($t=0$ a $t=\qty{3600}{\second}$) hasta alcanzar el equilibrio.
+    \item \textbf{Prueba de Escalón (Step Test):} En el instante $t=\qty{1}{\hour}$, se aplica un cambio tipo escalón en la referencia, aumentando su valor a \qty{55}{\degreeCelsius}.
+\end{enumerate}
+
+El análisis de métricas temporales ($T_r, T_s, M_p, e_{ss}$) se aplica específicamente sobre la respuesta del sistema durante esta segunda etapa (transición de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}).
+
+La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del sistema durante la prueba. Se observa la evolución de la temperatura (línea azul) intentando alcanzar la nueva referencia (línea roja discontinua) a partir del segundo cambio de escalón.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
+        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \label{fig:plot:entorno-controlado-a}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
+        \caption{Tensión (\si{\volt}) aplicada en los actuadores.}
+        \label{fig:plot:entorno-controlado-b}
+    \end{subfigure}
+    \caption{Respuesta transitoria del sistema controlado ante un escalón de referencia de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}.}
+    \label{fig:plot:entorno-controlado}
+\end{figure}
+
+A partir de esta respuesta, se calcularon las métricas de desempeño definidas en la metodología. Los resultados se presentan en la Tabla~\ref{tab:res:metricas}.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{Métrica}               & \textbf{Símbolo} & \textbf{Valor Obtenido}    \\
+        \hline
+        Tiempo de Subida               & $T_r$            & \qty{29.1}{\minute}        \\
+        Tiempo de Estabilización (1\%) & $T_s$            & [VALOR] \si{\second}       \\
+        Sobrepaso Máximo               & $M_p$            & \qty{0.11}{\degreeCelsius} \\
+        Error de Estado Estacionario   & $e_{ss}$         & \qty{5.53}{\degreeCelsius} \\
+        \hline
+    \end{tabular}
+    \caption{Resumen de métricas de desempeño temporal para $K_c = -0.25$.}
+    \label{tab:res:metricas}
+\end{table}
 
 \section{Validación ante Escenarios de Perturbación Dinámica}
 

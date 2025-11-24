@@ -108,7 +108,7 @@ Dada estas consideraciones se señalan las entradas que finalmente son aplicadas
 \vspace{5pt}
 con $\displaystyle u(t) = K_c \cdot (Ref - T_p(t)) + \text{Offset}$
 
-\section{Métricas de Evaluación}
+\section{Métricas de Evaluación} \label{sec:metricas}
 
 A continuación se definen las métricas utilizadas para cuantificar el desempeño del sistema. Estas se calculan numéricamente a partir de los vectores de tiempo ($t$) y temperatura ($T_p$) obtenidos en la simulación.
 
@@ -171,7 +171,7 @@ con estos valores será posible cuantificar la energía consumida por cada actua
 
 Para la resolución computacional de este sistema de ecuaciones diferenciales no lineales, se mantuvo el uso del solucionador \texttt{ode45} de MATLAB, el cual implementa un método de Runge-Kutta de orden 4(5) con paso adaptativo \cite{shampine1997matlab}, la versión de MATLAB utilizada fue la \textit{R2025b}.
 
-\subsection{Escenarios de Simulación} \label{subsec:escenarions-de-simulacion}
+\subsection{Escenarios de Simulación} \label{ssec:escenarions-de-simulacion}
 
 Para evaluar el desempeño del sistema de control propuesto, se diseñaron diversos escenarios de simulación que replican condiciones operativas típicas y extremas. Estos escenarios corresponden a variaciones en la irradiancia solar y en la temperatura ambiente los cuales constituirán diferentes perfiles de carga térmica en el panel fotovoltaico.
 
@@ -213,7 +213,7 @@ Respecto a el uso de la velocidad del viento, esta se mantuvo igual para todos l
 
 A continuación se presentarán los ajustes aplicados a estas expresiones base para generar los diferentes escenarios de simulación.
 
-\subsubsection{Día Despejado} \label{subsubsec:dia-despejado}
+\subsubsection{Día Despejado} \label{sssec:dia-despejado}
 
 Este escenario corresponde directamente al caso base original usado en el proyecto anterior, los parámetros usados en las ecuaciones \ref{eq:temperatura-ambiente}, \ref{eq:irradiancia-solar} y son los siguientes:
 
@@ -276,7 +276,7 @@ A diferencia de los escenarios anteriores que presentan variaciones lentas y con
 
 La formulación matemática detallada de estas funciones de perturbación, así como los parámetros temporales de periodicidad y factores de atenuación utilizados, se encuentran descritos en el Apéndice \ref{app:A} resultando en las siguientes expresiones para la generación de $G$ y $T_\text{amb}$:
 
-\subsubsection{Entorno Controlado para Análisis de Métricas} \label{subsecc:entorno-controlado}
+\subsubsection{Entorno Controlado para Análisis de Métricas} \label{sssec:entorno-controlado}
 
 Para aplicar correctamente las métricas de desempeño temporal definidas en la sección anterior, se efectúan los cálculos y mediciones sobre un entorno de simulación controlada. Este entorno se caracteriza por mantener condiciones ambientales constantes durante el periodo de análisis, eliminando las variaciones diurnas y perturbaciones externas.
 
