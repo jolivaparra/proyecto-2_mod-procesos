@@ -1,7 +1,6 @@
 %% ========== CÓDIGO PRINCIPAL ==========
-
 clear; close all; clc;
-
+set(0, 'DefaultAxesBox', 'on'); % Da bordes a los gráficos
 % =========== Carga de Parámetros y Perturbaciones ==========
 p = parametros();
 pert = Entradas();
@@ -24,7 +23,7 @@ odefun_snrefr = @(t, y) modelo(t, y, p, ...
 [t_sr, y_sr] = ode45(odefun_snrefr, tspan, y0);
 T_p_sr = y_sr(:, 1) - 273.15;
 
-fprintf("Máx día desjepado sin refrigeración: %.2f\n", max(T_p_sr));
+fprintf("Máx día despejado sin refrigeración: %.2f\n", max(T_p_sr));
 
 figure("Name", "Sin Refrigeración", "NumberTitle", "off");
 plot(t_sr/3600, T_p_sr, "LineWidth", 2, "Color", "b");
@@ -47,7 +46,24 @@ odefun_la = @(t, y) modelo(t, y, p, ...
 [t_la, y_la] = ode45(odefun_la, tspan, y0);
 T_p_la = y_la(:, 1) - 273.15;
 
-fprintf("Máx día desjepado con entrada escalón (Lazo Abierto): %.2f\n", max(T_p_la));
+% Máx temperatura alcanzada.
+max_temp = max(T_p_la);
+
+% Para graficar energía consumida
+W_vent = arrayfun(voltaje_ventilador_escalon, t_la).^2 / p.R_vent;
+W_bomb = arrayfun(voltaje_bomba_escalon, t_la).^2 / p.R_bomb;
+% Energía consumida en kWh
+E_vent_plot = cumtrapz(t_la, W_vent) / 3.6e+6;
+E_bomb_plot = cumtrapz(t_la, W_bomb) / 3.6e+6;
+E_total_plot = E_vent_plot + E_bomb_plot;
+
+% Datos energéticos para extraer
+E_vent = trapz(t_la, W_vent) / 3.6e+6;
+E_bomb = trapz(t_la, W_bomb) / 3.6e+6;
+E_total = E_vent + E_bomb;
+
+fprintf("Lazo Abierto:\t Temp Máx |  E_vent   |   E_bomb  | E_total \n")
+fprintf("\t\t %.2f °C | %.3f kWh | %.3f kWh | %.3f kWh \n", max_temp, E_vent, E_bomb, E_total);
 
 figure("Name", "Lazo Abierto", "NumberTitle", "off");
 plot(t_la/3600, T_p_la, "LineWidth", 2, "Color", "b");
@@ -55,6 +71,17 @@ xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
 xlim([0, 24]); xticks(0:2:24);
 ylim([0, 60]);
 grid on;
+
+figure("Name", "Energía consumida Lazo Abierto", "NumberTitle", "off");
+hold on; grid on;
+plot(t_la/3600, E_total_plot, "LineWidth", 2, "Color", "g");
+plot(t_la/3600, E_vent_plot, "LineWidth", 2, "Color", "b");
+plot(t_la/3600, E_bomb_plot, "LineWidth", 2, "Color", "r");
+legend("E. consum. Ventilador", "E. consum. Bomba", "E. Total consum.", "Location", "northwest");
+xlim([0,24]); xticks(0:2:24);
+ylim([-0.1, 0.8]); yticks(0:0.2:0.8);
+xlabel("Hora del día (hrs)"); ylabel("Energía Consumida (kWh)");
+
 
 %% ========== OBJETIVO 6: ESTABILIDAD EN ESCENARIO REAL (DÍA DESPEJADO) ==========
 figure("Name", "Comparativa Kp - Día Despejado", "NumberTitle", "off");
@@ -164,10 +191,10 @@ ESS = 55 - T_final_real;
 Sobrepaso = max(T_fase2) - T_final_real;
 
 % --- IMPRIMIR RESULTADOS ---
-fprintf('\n--- RESULTADOS STEP TEST ---\n');
+fprintf('\n--- RESULTADOS ENTORNO CONTROLADO ---\n');
+fprintf('Tr: %.1f s | Ts: %.1f s | ESS: %.2f °C | Sobrepaso: %.2f\n\n', Tr, Ts, ESS, Sobrepaso);
 fprintf('Centro Oscilación: %.4f°C\n', T_final_real);
 fprintf('Banda (5%%): +/- %.4f°C\n', banda);
-fprintf('Ts: %.1f s | Tr: %.1f s | ESS: %.2f °C | Sobrepaso: %.2f\n\n', Ts, Tr, ESS, Sobrepaso);
 
 % --- GRÁFICOS FINAL ---
 figure("Name", "Step Test - Métricas", "NumberTitle", "off");
@@ -209,7 +236,7 @@ xlabel('Tiempo (h)'); ylabel('Voltaje (V)');
 % Objetivo: Demostrar que el Kp elegido (-0.1) funciona en los 3 climas.
 % NO comparamos Kp aquí, solo validamos el comportamiento.
 
-nombre_perfiles = ["Día Despejado", "Día Nublado", "Día Intermitente"];
+nombre_perfiles = ["Despejado", "Nublado", "Intermitente"];
 
 % Array de funciones de pertubación
 perfil_pert = {
@@ -220,7 +247,7 @@ perfil_pert = {
 
 Kp_optimo = p.K_p(1);
 
-fprintf("--- Max Temp con K_p:%.2f ---\n", Kp_optimo);
+fprintf("--- (K_p:%.3f) Max Temp |  E_vent   |  E_bomb   |  E_total \n", Kp_optimo);
 
 for i=1:size(perfil_pert, 1)
     temperatura_ambiente = perfil_pert{i, 1};

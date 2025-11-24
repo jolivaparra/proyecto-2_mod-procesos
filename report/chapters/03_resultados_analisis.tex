@@ -45,13 +45,13 @@ La Figura~\ref{fig:plot:comparativa-kp} presenta la superposición de las respue
     \label{fig:plot:comparativa-kp}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
-        \caption{Temperatura (\si{\degreeCelsius}) del panel solar.}
+        \caption{Temperatura (\unit{\degreeCelsius}) del panel solar.}
         \label{fig:plot:comparativa-kp-a}
     \end{subfigure}
     \hfil
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
-        \caption{Tensión (\si{\volt}) aplicada en cada actuador.}
+        \caption{Tensión (\unit{\volt}) aplicada en cada actuador.}
         \label{fig:plot:comparativa-kp-b}
     \end{subfigure}
 \end{figure}
@@ -92,12 +92,12 @@ La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del si
     \label{fig:plot:entorno-controlado}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
-        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
         \label{fig:plot:entorno-controlado-a}
     \end{subfigure}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
-        \caption{Tensión (\si{\volt}) aplicada en los actuadores.}
+        \caption{Tensión (\unit{\volt}) aplicada en los actuadores.}
         \label{fig:plot:entorno-controlado-b}
     \end{subfigure}
 \end{figure}
@@ -153,13 +153,13 @@ Se simuló el comportamiento bajo el perfil de ``Día Soleado'', el cual represe
     \label{fig:plot:dia-despejado}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-despejado-temp-panel.pdf}
-        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
         \label{fig:plot:dia-despejado-a}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-despejado-volt.pdf}
-        \caption{Tensión (\si{\volt}) aplicada a los actuadores.}
+        \caption{Tensión (\unit{\volt}) aplicada a los actuadores.}
         \label{fig:plot:dia-despejado-b}
     \end{subfigure}
 \end{figure}
@@ -179,13 +179,13 @@ Este escenario simula un día con baja irradiancia ($G_{max} = \qty{500}{\watt\p
     \label{fig:dia-nublado}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-nublado-temp-panel.pdf}
-        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
         \label{fig:dia:nublado-a}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-nublado-volt.pdf}
-        \caption{Tensión (\si{\volt}) aplicada a los actuadores}
+        \caption{Tensión (\unit{\volt}) aplicada a los actuadores}
         \label{fig:dia:nublado-b}
     \end{subfigure}
 \end{figure}
@@ -206,13 +206,13 @@ Finalmente, se evaluó la respuesta ante cambios abruptos de nubosidad para prob
     \label{fig:plot:dia-intermitente}
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-intermitente-temp-panel.pdf}
-        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
         \label{fig:plot:dia-intermitente-a}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/dia-intermitente-volt.pdf}
-        \caption{Tensión (\si{\volt}) aplicada a los actuadores.}
+        \caption{Tensión (\unit{\volt}) aplicada a los actuadores.}
         \label{fig:plot:dia-intermitente-b}
     \end{subfigure}
 \end{figure}
@@ -223,6 +223,70 @@ Finalmente, se evaluó la respuesta ante cambios abruptos de nubosidad para prob
     \item \textbf{Estabilidad:} A pesar de la naturaleza cuadrada de la perturbación solar, la temperatura del panel varía suavemente gracias a la inercia térmica, manteniéndose siempre en rangos seguros y estables.
 \end{itemize}
 
-\section{Análisis de la Eficiencia Energética}
+\section{Análisis de Eficiencia Energética}
 
+Finalmente, se evaluó la viabilidad económica del diseño cuantificando el costo energético. Para ello, se calculó el \textbf{Esfuerzo de Control Acumulado} (en \unit{\kilo\watt{}\hour}) comparando el desempeño de la estrategia propuesta frente a la operación convencional y analizando su adaptabilidad ante distintos climas.
 
+\subsection{Comparación: Lazo Abierto vs. Lazo Cerrado}
+
+Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a una operación en Lazo Abierto con señal fija ($V_{vent}=\qty{12}{\volt}, V_{bomb}=\qty{3}{\volt}$) bajo el escenario de mayor demanda (Día Soleado).
+
+\begin{figure}[H]
+    \centering
+    % Puedes poner los dos gráficos uno al lado del otro o uno bajo el otro
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/energia-lazo-abierto.pdf}
+        \caption{Lazo Abierto (Fijo).}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{plots/energia-dia-despejado.pdf}
+        \caption{Lazo Cerrado (Modulado).}
+    \end{subfigure}
+    \caption{Comparativa de acumulación de energía durante un ciclo de 24 horas.}
+    \label{fig:res:comparativa_energia_plots}
+\end{figure}
+
+La Tabla~\ref{tab:ahorro_global} resume el impacto del control en el ahorro total.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Estrategia}      & \textbf{Energía Total}         & \textbf{Ahorro Absoluto}       & \textbf{\% Ahorro}    \\
+        \hline
+        Lazo Abierto (Base)      & \qty{0.720}{\kilo\watt{}\hour} & -                              & -                     \\
+        Lazo Cerrado (Propuesto) & \qty{0.037}{\kilo\watt{}\hour} & \qty{0.068}{\kilo\watt{}\hour} & \qty{94.86}{\percent} \\
+        \hline
+    \end{tabular}
+    \caption{Cuantificación del ahorro energético diario.}
+    \label{tab:ahorro_global}
+\end{table}
+
+\subsection{Desglose por Escenarios Climáticos}
+
+Además del ahorro base, se verificó la capacidad del controlador para reducir el consumo en días de menor carga térmica. La Tabla~\ref{tab:res:desglose_escenarios} detalla el aporte de cada actuador según el clima.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Escenario} & \textbf{E. Ventilador (\unit{\kilo\watt{}\hour})} & \textbf{E. Bomba (\unit{\kilo\watt{}\hour})} & \textbf{Total Diario (\unit{\kilo\watt{}\hour})} \\
+        \hline
+        Día Soleado (Máx)  & 0.027                                             & 0.010                                        & 0.037                                            \\
+        Día Intermitente   & 0.003                                             & 0.004                                        & 0.007                                            \\
+        Día Nublado (Mín)  & 0.019                                             & 0.009                                        & 0.027                                            \\
+        \hline
+    \end{tabular}
+    \caption{Consumo energético (\unit{\kilo\watt{}\hour}) desagregado por actuador y condición climática.}
+    \label{tab:res:desglose_escenarios}
+\end{table}
+
+\subsection*{Discusión de Resultados}
+
+\begin{itemize}
+    \item \textbf{Ahorro Significativo:} La implementación del lazo cerrado genera un ahorro del \textbf{[X]\%} respecto a la operación fija. Esto valida que modular la potencia es económicamente superior a mantener el sistema encendido al máximo, incluso en el día más caluroso.
+
+    \item \textbf{Adaptabilidad Automática:} Los datos de la Tabla~\ref{tab:res:desglose_escenarios} demuestran que el consumo disminuye considerablemente en los días Nublado e Intermitente. El controlador "siente" la menor carga térmica y reduce el esfuerzo del ventilador automáticamente, sin intervención humana.
+
+    \item \textbf{Validación Estrategia SIDO:} En todos los escenarios, el consumo de la bomba se mantiene bajo y estable, validando que limitar su tensión a \qty{3}{\volt} fue una decisión de diseño correcta para minimizar el costo base operativo.
+\end{itemize}
