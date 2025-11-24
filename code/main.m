@@ -26,7 +26,6 @@ T_p_sr = y_sr(:, 1) - 273.15;
 
 fprintf("Máx día desjepado sin refrigeración: %.2f\n", max(T_p_sr));
 
-
 figure("Name", "Sin Refrigeración", "NumberTitle", "off");
 plot(t_sr/3600, T_p_sr, "LineWidth", 2, "Color", "b");
 xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
@@ -42,11 +41,8 @@ voltaje_ventilador_escalon = @(t) 12 * ((9 <= t/3600) & (t/3600 <= 19));
 odefun_la = @(t, y) modelo(t, y, p, ...
     @(t) pert.temperatura_ambiente_despejado(t), ...
     @(t) pert.irradiancia_solar_despejado(t), ...
-    @(t) pert.velocidad_viento(t), ...
-    0, ...
-    voltaje_bomba_escalon, ...
-    voltaje_ventilador_escalon, ...
-    0);
+    @(t) pert.velocidad_viento(t), 0, voltaje_bomba_escalon, ...
+    voltaje_ventilador_escalon, 0);
 
 [t_la, y_la] = ode45(odefun_la, tspan, y0);
 T_p_la = y_la(:, 1) - 273.15;
@@ -85,8 +81,8 @@ colores = lines(length(p.K_p));
 leyendas = strings(1, length(p.K_p));
 
 % === ARRAYS PARA GUARDAR LOS OBJETOS DE LA GRÁFICA ===
-graficas_temp = gobjects(1, length(p.K_p)); % Para subplot 1
-graficas_volt = gobjects(1, length(p.K_p)); % Para subplot 2 (% <--- AGREGADO)
+graficas_temp = gobjects(1, length(p.K_p));
+graficas_volt = gobjects(1, length(p.K_p));
 
 for i = 1:length(p.K_p)
     Kp_actual = p.K_p(i);
@@ -105,7 +101,7 @@ for i = 1:length(p.K_p)
     graficas_volt(i) = plot(ax2, t_sim/3600, V_vent_plot, 'LineWidth', 1.5, 'Color', colores(i,:));
 
     % Creamos el texto de la leyenda para este Kp
-    leyendas(i) = sprintf('K_p = %.2f', Kp_actual);
+    leyendas(i) = compose('K_p = %.2f', Kp_actual);
 end
 
 % === AÑADIR LAS LEGENDS AL FINAL ===
@@ -189,8 +185,8 @@ yline(T_final_real - banda, 'Color', [0 0.5 0], 'LineStyle', '--', 'LineWidth', 
 % Línea de Tiempo de Estabilización
 if Ts > 0
     % (3600 + Ts) porque el escalón empieza en la hora 1
-    xline((3600+Tr)/3600, 'm-', sprintf('Tr=%.0fs', Ts), 'LineWidth', 2, 'LabelVerticalAlignment', 'bottom', 'Color', 'b');
-    xline((3600+Ts)/3600, 'm-', sprintf('Ts=%.0fs', Ts), 'LineWidth', 2);
+    xline((3600+Tr)/3600, 'm-', compose('Tr=%.0fs', Ts), 'LineWidth', 2, 'LabelVerticalAlignment', 'bottom', 'Color', 'b');
+    xline((3600+Ts)/3600, 'm-', compose('Ts=%.0fs', Ts), 'LineWidth', 2);
 end
 
 title("Respuesta Transitoria");

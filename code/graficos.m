@@ -33,6 +33,9 @@ u = K_p * (p.ref - y(:,1)) + p.offset;
 salida_vent = min(p.V_vent_MAX, max(u, p.V_MIN));
 salida_bomb = min(p.V_bomb_suficiente, max(u, p.V_MIN));
 
+% Máx temperatura alcanzada.
+max_temp = max(T_p);
+
 % Para graficar energía consumida
 W_vent = salida_vent.^2 / p.R_vent;
 W_bomb = salida_bomb.^2 / p.R_bomb;
@@ -42,16 +45,17 @@ E_bomb = cumtrapz(t, W_bomb) / 3.6e6;
 E_total = E_vent + E_bomb;
 
 % ---------- Temperatura Panel Solar ----------
-figure("Name", ("Temperatura: "+ nombre), "NumberTitle", "off");
+figure("Name", compose("Temp/Entradas: %s",nombre), "NumberTitle", "off");
+subplot(1, 2, 1);
 plot(t/3600, T_p);
 xlim([0,24]); xticks(0:2:24);
 ylim([0, 60]);
 xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
+yline(max_temp, 'r--', compose("Máx: %.2f°C", max_temp),'Color', 'r', 'LineWidth', 2);
 grid on;
 
 % ---------- Voltajes Ventilador/Bomba ----------
-figure("Name", ("Energía Consumida: "+ nombre), "NumberTitle", "off");
-subplot(1, 2, 1);
+subplot(1, 2, 2);
 plot(t/3600, salida_vent, "LineStyle", "--", "LineWidth", 2, "Color", "b");
 hold on; grid on;
 plot(t/3600, salida_bomb, "LineStyle", "-.", "LineWidth", 2, "Color", "r");
@@ -62,7 +66,7 @@ xlabel("Hora del día (hrs)"); ylabel("Voltaje (V)");
 hold off;
 
 % ---------- Energía Consumida ----------
-subplot(1, 2, 2);
+figure("Name", compose("Energía Consumida: %s", nombre), "NumberTitle", "off");
 plot(t/3600, E_vent, "LineWidth", 2, "Color", "b");
 hold on; grid on;
 plot(t/3600, E_bomb, "LineWidth", 2, "Color", "r");
@@ -73,7 +77,7 @@ ylim([-0.001, 0.04]); yticks(0:0.01:0.04);
 xlabel("Hora del día (hrs)"); ylabel("Energía Consumida (kWh)");
 
 % ---------- Temperatura Ambiente ----------
-figure("Name", ("Perturbaciones: "+ nombre), "NumberTitle", "off");
+figure("Name", compose("Perturbaciones: %s", nombre), "NumberTitle", "off");
 subplot(1, 2, 1);
 plot(t/3600, plot_temp_amb, "LineWidth", 1, "Color", "g");
 xlim([0,24]); xticks(0:2:24);
