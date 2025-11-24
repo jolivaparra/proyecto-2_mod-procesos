@@ -41,26 +41,20 @@ La Figura~\ref{fig:plot:comparativa-kp} presenta la superposición de las respue
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.49\textwidth}
+    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ señalado.}
+    \label{fig:plot:comparativa-kp}
+    \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
         \caption{Temperatura (\si{\degreeCelsius}) del panel solar.}
         \label{fig:plot:comparativa-kp-a}
     \end{subfigure}
     \hfil
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
         \caption{Tensión (\si{\volt}) aplicada en cada actuador.}
         \label{fig:plot:comparativa-kp-b}
     \end{subfigure}
-    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ señalado.}
-    \label{fig:plot:comparativa-kp}
 \end{figure}
-
-% \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ asociado. \\
-%         \textbf{(a)} Temperatura (\si{\celsius}) del panel solar.\\
-%         \textbf{(b)} Detalla la tensión (\si{\volt}) aplicado en cada actuador.}
-%     \label{fig:res:comparativa_kp}
-% \subsection*{Análisis de Resultados de Sintonía}
 
 A partir de la visualización del comportamiento dinámico, se observan dos fenómenos contrapuestos:
 
@@ -94,18 +88,18 @@ La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del si
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.49\textwidth}
+    \caption{Respuesta transitoria del sistema controlado ante un escalón de referencia de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}.}
+    \label{fig:plot:entorno-controlado}
+    \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
         \caption{Temperatura (\si{\degreeCelsius}) del panel.}
         \label{fig:plot:entorno-controlado-a}
     \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
         \caption{Tensión (\si{\volt}) aplicada en los actuadores.}
         \label{fig:plot:entorno-controlado-b}
     \end{subfigure}
-    \caption{Respuesta transitoria del sistema controlado ante un escalón de referencia de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}.}
-    \label{fig:plot:entorno-controlado}
 \end{figure}
 
 A partir de esta respuesta, se calcularon las métricas de desempeño definidas en la metodología. Los resultados se presentan en la Tabla~\ref{tab:metricas}.
@@ -145,5 +139,90 @@ A partir de los datos obtenidos en la Tabla~\ref{tab:metricas}, se desprenden la
 
 \section{Validación ante Escenarios de Perturbación Dinámica}
 
+Una vez verificado el desempeño transitorio en condiciones ideales, se sometió el sistema de control a los perfiles de perturbación de 24 horas definidos en la metodología. El objetivo de esta sección es validar la capacidad del controlador para mantener la temperatura del panel dentro de los límites de seguridad ($T_p < \SI{55}{\degreeCelsius}$) bajo distintas condiciones operativas.
+
+A continuación, se analiza la respuesta del sistema controlado ($K_c = -0.25$) frente a los tres escenarios climáticos planteados.
+
+\subsection{Escenario 1: Carga Máxima (Día Despejado)}
+
+Se simuló el comportamiento bajo el perfil de ``Día Soleado'', el cual representa la condición más exigente para los actuadores (irradiancia pico de \qty{1000}{\watt\per\meter\squared}).
+
+\begin{figure}[H]
+    \centering
+    \caption{Simulaciones del controlador para un día soleado/despejado}
+    \label{fig:plot:dia-despejado}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-despejado-temp-panel.pdf}
+        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \label{fig:plot:dia-despejado-a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-despejado-volt.pdf}
+        \caption{Tensión (\si{\volt}) aplicada a los actuadores.}
+        \label{fig:plot:dia-despejado-b}
+    \end{subfigure}
+\end{figure}
+\paragraph{Análisis}
+\begin{itemize}
+    \item \textbf{Seguridad Térmica:} Durante las horas de máxima radiación, la temperatura se estabiliza por debajo de los \qty{50}{\degreeCelsius}, cumpliendo holgadamente el requisito de seguridad ($< \SI{55}{\degreeCelsius}$) en el peor caso posible.
+    \item \textbf{Actuación Progresiva:} La señal de control evoluciona suavemente siguiendo la curva solar, sin presentar saturaciones bruscas que dañen los motores.
+\end{itemize}
+
+\subsection{Escenario 2: Carga Reducida (Día Nublado)}
+
+Este escenario simula un día con baja irradiancia ($G_{max} = \qty{500}{\watt\per\meter\squared}$), útil para verificar que el sistema no desperdicie energía sobre-enfriando el panel cuando no es necesario.
+
+\begin{figure}[H]
+    \centering
+    \caption{Simulaciones del controlador para un día nublado.}
+    \label{fig:dia-nublado}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-nublado-temp-panel.pdf}
+        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \label{fig:dia:nublado-a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-nublado-volt.pdf}
+        \caption{Tensión (\si{\volt}) aplicada a los actuadores}
+        \label{fig:dia:nublado-b}
+    \end{subfigure}
+\end{figure}
+
+\paragraph{Análisis}
+\begin{itemize}
+    \item \textbf{Adaptabilidad Energética:} Se observa que, debido a la menor carga térmica, el esfuerzo de control (voltaje) es significativamente menor que en el día despejado.
+    \item \textbf{Prevención de Sobre-enfriamiento:} El sistema mantiene la temperatura cercana a la referencia sin forzar los actuadores al máximo, validando que el algoritmo proporcional ajusta su intensidad según la demanda real.
+\end{itemize}
+
+\subsection{Escenario 3: Variación Rápida (Día Intermitente)}
+
+Finalmente, se evaluó la respuesta ante cambios abruptos de nubosidad para probar la velocidad de reacción del lazo cerrado.
+
+\begin{figure}[H]
+    \centering
+    \caption{Simulaciones del controlador para un día parcialmente nublado (Intermitente).}
+    \label{fig:plot:dia-intermitente}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-intermitente-temp-panel.pdf}
+        \caption{Temperatura (\si{\degreeCelsius}) del panel.}
+        \label{fig:plot:dia-intermitente-a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/dia-intermitente-volt.pdf}
+        \caption{Tensión (\si{\volt}) aplicada a los actuadores.}
+        \label{fig:plot:dia-intermitente-b}
+    \end{subfigure}
+\end{figure}
+
+\paragraph{Análisis}
+\begin{itemize}
+    \item \textbf{Rechazo a Perturbaciones:} Al producirse una caída abrupta de irradiancia (paso de nube), el controlador reduce casi instantáneamente el voltaje de los actuadores, evitando el gasto innecesario de energía.
+    \item \textbf{Estabilidad:} A pesar de la naturaleza cuadrada de la perturbación solar, la temperatura del panel varía suavemente gracias a la inercia térmica, manteniéndose siempre en rangos seguros y estables.
+\end{itemize}
+
 \section{Análisis de la Eficiencia Energética}
+
 
