@@ -34,7 +34,6 @@
 *.gz
 
 # Bloquear el archivo PDF final generado (opcional, pero recomendado)
-main.pdf
 
 
 #################################

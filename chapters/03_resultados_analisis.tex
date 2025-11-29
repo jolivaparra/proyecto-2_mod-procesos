@@ -72,7 +72,7 @@ A partir de la visualización del comportamiento dinámico, se observan dos fen�
 
 \section{Evaluación de Desempeño Transitorio}
 
-Habiendo seleccionado la ganancia definitiva ($K_c = -0.25$), se procede a cuantificar el desempeño dinámico del sistema mediante las métricas definidas en la Sección~\ref{sec:metricas}. Cabe aclarar que este análisis no fué posible realizarlo en la etapa de sintonización debido a la presencia de perturbaciones variables (irradiancia y temperatura ambiente) que distorsionan la respuesta natural del sistema.
+Habiendo seleccionado la ganancia definitiva ($K_c = -0.25$), se procede a cuantificar el desempeño dinámico del sistema mediante las métricas definidas en la Sección~\ref{sec:metricas}. Cabe aclarar que este análisis no fue posible realizarlo en la etapa de sintonización debido a la presencia de perturbaciones variables (irradiancia y temperatura ambiente) que distorsionan la respuesta natural del sistema.
 
 La evaluación se realiza bajo el \textbf{Entorno Controlado} descrito en la Sección~\ref{sssec:entorno-controlado}, el cual aísla el sistema de perturbaciones variables manteniendo condiciones constantes: irradiancia solar de \qty{800}{\watt\per\meter\squared}, temperatura ambiente de \qty{30}{\degreeCelsius} y velocidad del viento de \qty{5}{\meter\per\second}.
 
@@ -229,21 +229,21 @@ Finalmente, se evaluó la viabilidad económica del diseño cuantificando el cos
 
 \subsection{Comparación: Lazo Abierto vs. Lazo Cerrado}
 
-Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a una operación en Lazo Abierto con señal fija ($V_{vent}=\qty{12}{\volt}, V_{bomb}=\qty{3}{\volt}$) bajo el escenario de mayor demanda (Día Soleado).
+Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a una operación en Lazo Abierto con señal fija ($V_{vent}=\qty{12}{\volt}, V_{bomb}=\qty{3}{\volt}$) bajo el escenario de mayor demanda (Día Soleado). En las Figuras \ref{fig:plot:energia-consumida-lazo-abierto} y \ref{fig:plot:energia-consumida-lazo-cerrado} se observa la energía acomulada a lo largo del día mencionado.
 
 \begin{figure}[H]
     \centering
-    % Puedes poner los dos gráficos uno al lado del otro o uno bajo el otro
-    \begin{subfigure}[b]{0.49\textwidth}
-        \includegraphics[width=\textwidth]{plots/energia-lazo-abierto.pdf}
-        \caption{Lazo Abierto (Fijo).}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-        \includegraphics[width=\textwidth]{plots/energia-dia-despejado.pdf}
-        \caption{Lazo Cerrado (Modulado).}
-    \end{subfigure}
-    \caption{Comparativa de acumulación de energía durante un ciclo de 24 horas.}
-    \label{fig:res:comparativa_energia_plots}
+    \includegraphics[width=0.8\textwidth]{plots/energia-lazo-abierto.pdf}
+    \caption{Energía Consumida por el sistema de regriferación en Lazo Abierto.}
+    \label{fig:plot:energia-consumida-lazo-abierto}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/energia-dia-despejado.pdf}
+
+    \caption{Energía Consumida por el sistema de regriferación en Lazo Cerrado.}
+    \label{fig:plot:energia-consumida-lazo-cerrado}
 \end{figure}
 
 La Tabla~\ref{tab:ahorro_global} resume el impacto del control en el ahorro total.
