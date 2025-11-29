@@ -1,0 +1,22 @@
+\chapter{Conclusiones}
+
+El presente proyecto logró diseñar, simular y validar exitosamente una estrategia de control para la gestión térmica eficiente de un panel fotovoltaico. A partir del análisis de los resultados obtenidos, se establecen las siguientes conclusiones principales:
+
+\begin{enumerate}
+    \item \textbf{Cumplimiento de Seguridad Térmica:}
+          Se verificó que el controlador Proporcional implementado ($K_c = -0.25$) es capaz de mantener la temperatura del panel consistentemente por debajo del límite crítico de \qty{55}{\degreeCelsius}. En el escenario más exigente (Día Soleado), la temperatura máxima registrada fue inferior a \qty{50}{\degreeCelsius}, garantizando la integridad física del equipo y evitando la degradación prematura de los materiales.
+
+    \item \textbf{Eficiencia Energética Superior:}
+          La evaluación comparativa demostró que la estrategia de control propuesta reduce el consumo energético en un \textbf{94.8\%} respecto a una operación convencional de lazo abierto (potencia fija). El sistema demostró capacidad para adaptar el esfuerzo de control a la demanda real, reduciendo el consumo diario de \qty{0.720}{\kilo\watt\hour} a apenas \qty{0.037}{\kilo\watt\hour}, validando la viabilidad económica de la solución.
+
+    \item \textbf{Validación de la Estrategia SIDO:}
+          La decisión de diseño de saturar la bomba hidráulica a un voltaje de mantenimiento (\qty{3}{\volt}) y delegar la modulación dinámica al ventilador resultó exitosa. El análisis desagregado reveló que esta configuración minimiza el consumo base del sistema sin comprometer la capacidad de enfriamiento, confirmando que operar la bomba a su tensión nominal (\qty{24}{\volt}) habría sido energéticamente ineficiente e innecesario.
+
+    \item \textbf{Robustez ante Perturbaciones:}
+          Las simulaciones bajo condiciones intermitentes confirmaron que el lazo de control posee la velocidad de reacción suficiente para adaptarse a cambios bruscos de nubosidad. El sistema ajusta instantáneamente el voltaje de los actuadores ante caídas de irradiancia, evitando el sobre-enfriamiento y optimizando el uso de recursos.
+
+    \item \textbf{Estabilidad Dinámica:}
+          A pesar de utilizar un controlador puramente proporcional, el sistema exhibe un comportamiento estable y subamortiguado. El error de estado estacionario resultante actúa favorablemente como un margen de seguridad operativo.
+\end{enumerate}
+
+Como trabajo futuro, se sugiere la implementación de estrategias de control más avanzadas, específicamente la incorporación de una **Acción Derivativa (Control PD o PID)**. La adición del término derivativo permitiría anticipar la tasa de cambio de la temperatura, mejorando la amortiguación de las oscilaciones residuales observadas y habilitando una acción de control más enérgica para alcanzar el Set-Point con mayor rapidez y precisión, sin comprometer la estabilidad del sistema.
