@@ -2,7 +2,7 @@
 
 \section{Descripción del Sistema y Modelo Conceptual}
 
-El sistema bajo estudio corresponde al modelo matemático desarrollado y validado en el proyecto pasado. Físicamente, se trata de una planta térmica compuesta por un panel fotovoltaico acoplado a un circuito de refrigeración activa por agua, el cual incluye una bomba de circulación y un intercambiador de calor (radiador) con ventilación forzada.
+El sistema bajo estudio corresponde al modelo matemático desarrollado y validado en el proyecto pasado. Físicamente, se trata de una sistema térmico compuesta por un panel fotovoltaico acoplado a un circuito de refrigeración activa por agua, el cual incluye una bomba de circulación y un intercambiador de calor (radiador) con ventilación forzada.
 
 Para efectos del diseño de la estrategia de control, la física detallada del intercambio de calor se abstrae en un bloque dinámico o ``planta''. De acuerdo con la teoría de control clásica \cite{ogata2010modern}, el sistema se define por la relación causal entre sus variables:
 
@@ -73,7 +73,7 @@ La ley de control implementada en el simulador dinámico responde a la ecuación
 Donde:
 \begin{itemize}
     \item $u(t)$: Señal de control abstracta calculada por el algoritmo.
-    \item $Ref$: Temperatura de referencia o Set-Point (Ej. \SI{55}{\degreeCelsius}).
+    \item $Ref$: Temperatura de referencia o Set-Point (Ej. \qty{55}{\degreeCelsius}).
     \item $T_p(t)$: Temperatura actual del panel (variable realimentada).
     \item $K_c$: Ganancia proporcional (Sensibilidad).
     \item $\text{Offset}$: Valor constante añadido para mantener el sistema en un punto de operación intermedio cuando el error es cero, evitando el apagado total de los actuadores.
@@ -82,16 +82,16 @@ Donde:
 Consideraciones:
 \begin{itemize}
     \item \textbf{Signo de la Ganancia $K_c$}: Dado que el sistema busca generar refrigeración (generar tensión positiva) cuando la temperatura del panel excede la referencia (error negativo), la ganancia $K_c$ debe ser negativa para asegurar una respuesta adecuada del controlador.
-    \item \textbf{Valor del Offset} Se fijó un valor para el Offset de \SI{5}{\volt}, fijado experimentalmente con el objetivo de evitar activaciones bruscas en momentos tempranos del día. Este valor puede ser ajustado en función de las condiciones ambientales y los objetivos de eficiencia energética.
+    \item \textbf{Valor del Offset} Se fijó un valor para el Offset de \qty{5}{\volt}, fijado experimentalmente con el objetivo de evitar activaciones bruscas en momentos tempranos del día. Este valor puede ser ajustado en función de las condiciones ambientales y los objetivos de eficiencia energética.
 \end{itemize}
 
 \subsection{Gestión de Actuadores}
 
 El sistema físico cuenta con dos entradas manipulables ($V_{bomb}, V_{vent}$) pero el proyecto se estructuró de forma que se genera una única señal de mando $u(t)$ la cual será aplicada en cada actuador de igual manera.
 
-De forma experimental se obtuvo que la bomba de agua tiene relativamente los mismos efectos cuando esta funciona a su voltaje nominal (\SI{24}{\volt}) que a un voltaje reducido de \SI{3}{\volt}. Por lo tanto, se decidió que la tensión aplicada a la bomba será limitada a \SI{3}{\volt}.
+De forma experimental se obtuvo que la bomba de agua tiene relativamente los mismos efectos cuando esta funciona a su voltaje nominal (\qty{24}{\volt}) que a un voltaje reducido de \qty{3}{\volt}. Por lo tanto, se decidió que la tensión aplicada a la bomba será limitada a \qty{3}{\volt}.
 
-Posteriormente, para evitar irregularidades, la señal $u(t)$ se limita al rango operativo de los actuadores, es decir, entre \SI{0}{\volt} y \SI{12}{\volt} para el ventilador y entre \SI{0}{\volt} para la bomba de agua. De esta forma, valores negativos de $u$, que concluirían en un intento de ''calentar'' el panel aplicando tensión negativa, se ajusta a \SI{0}{\volt} (apagado), mientras que valores superiores a \SI{12}{\volt} (asociados a un error que el sistema no es capaz corregir) se limitan a \SI{12}{\volt} para el ventilador, y \SI{3}{\volt} para la bomba (máximo posible).
+Posteriormente, para evitar irregularidades, la señal $u(t)$ se limita al rango operativo de los actuadores, es decir, entre \qty{0}{\volt} y \qty{12}{\volt} para el ventilador y entre \qty{0}{\volt} y \qty{3}{\volt} para la bomba de agua. De esta forma, valores negativos de $u$, que concluirían en un intento de ''calentar'' el panel aplicando tensión negativa, se ajusta a \qty{0}{\volt} (apagado), mientras que valores superiores a \qty{12}{\volt} (asociados a un error que el sistema no es capaz corregir) se limitan a \qty{12}{\volt} para el ventilador, y \qty{3}{\volt} para la bomba (máximo escogido para mantener eficiencia energética).
 
 Esta estrategia híbrida permite mantener el circuito de agua activo con un consumo mucho más reducido, delegando la carga fuerte de disipación al ventilador solo cuando es necesario.
 
@@ -117,17 +117,43 @@ Para aplicar correctamente estas métricas, se efectúan los cálculos y medicio
 
 En dicho entorno se aplica un escalón en la referencia de temperatura ($Ref$) en la salida del controlador y se observa la respuesta del sistema.
 
-\subsubsection{Tiempo de subida ($T_r$)}
+\subsubsection{Determinación de la Temperatura de Régimen Permanente ($T_{\text{final}}$)}
 
-Se define como el tiempo necesario para que la respuesta del sistema recorra del \SI{10}{\percent} al \SI{90}{\percent} de su variación total real. Dado que el sistema es sobreamortiguado y no oscila, esta métrica es el indicador principal de la velocidad de reacción térmica.
+Para un sistema con oscilación residual sostenida, el valor de régimen permanente no se define por un punto de convergencia, sino como el \textbf{centro aritmético de la oscilación} en el estado estacionario.
+
+La Temperatura de Régimen Permanente ($T_{\text{final}}$) se calcula mediante el siguiente procedimiento numérico aplicado al segmento final de la simulación:
+
+\begin{enumerate}
+    \item \textbf{Aislamiento de la Cola:} Se identifica el segmento final de los datos de temperatura del sistema ($T_p$) para asegurar que se está en régimen permanente. (En MATLAB, esto corresponde al último $30\%$ del vector de datos de la respuesta al escalón).
+    \item \textbf{Determinación de Extremos:} Se obtienen el valor máximo ($T_{max, osc}$) y mínimo ($T_{min, osc}$) de la temperatura dentro de dicho segmento final.
+    \item \textbf{Cálculo del Centro Geométrico:} Se promedian los valores extremos, estableciendo el centro de oscilación ($T_{\text{final}}$).
+\end{enumerate}
+
+Este procedimiento se formaliza con la siguiente expresión, la cual establece que $T_{\text{final}}$ es el punto medio entre los valores extremos de la oscilación:
+
 \begin{equation}
-    T_r = t_{90\%} - t_{10\%}
+    T_{\text{final}} = \frac{T_{max, osc} + T_{min, osc}}{2}
 \end{equation}
 
-\subsubsection{Tiempo de estabilización ($T_s$)}
-Corresponde al tiempo de asentamiento o llegada. Se define como el instante en que la temperatura entra por primera vez en una banda de tolerancia del \SI{1}{\percent} respecto al valor final alcanzado ($T_{final}$).
+Este valor de $T_{\text{final}}$ es crucial, ya que sirve como referencia para el cálculo del Tiempo de Subida, el Tiempo de Estabilización y el Sobrepaso Máximo.
+
+\subsubsection{Tiempo de subida ($T_r$)}
+
+\subsubsection{Tiempo de subida ($T_r$)}
+
+Se define como el intervalo de tiempo necesario para que la respuesta del sistema transite del \SI{10}{\percent} al \SI{90}{\percent} de su variación total real ($\Delta T_{\text{total}}$).
+
 \begin{equation}
-    T_s = \min \{ t \mid |T_p(t) - T_\text{final}| \leq 0.01 \cdot \Delta T_\text{total}\}
+    T_r = t \Big|_{T_p = T_{\text{inicial}} + 0.9 \cdot \Delta T_{\text{total}}} - t \Big|_{T_p = T_{\text{inicial}} + 0.1 \cdot \Delta T_{\text{total}}}
+    \label{eq:trise}
+\end{equation}
+
+Donde $\Delta T_{\text{total}} = T_{\text{final}} - T_{\text{inicial}}$, y $T_{\text{inicial}}$ es la temperatura del panel al inicio de la prueba de escalón. Esta métrica caracteriza la inercia térmica del sistema durante la fase transitoria de aproximación.
+
+\subsubsection{Tiempo de estabilización ($T_s$)}
+Corresponde al tiempo de asentamiento o llegada. Se definó como el instante en que la temperatura entra por primera vez en una banda de tolerancia del \qty{5}{\percent} respecto al valor final alcanzado ($T_{final}$).
+\begin{equation}
+    T_s = \min \{ t \mid |T_p(t) - T_\text{final}| \leq 0.05 \cdot \Delta T_\text{total}\}
 \end{equation}
 
 \subsubsection{Sobrepaso ($M_p$)}
@@ -142,26 +168,26 @@ Es la diferencia permanente entre la referencia deseada ($Ref$) y el valor real 
     e_{ss} = Ref - T_{final}
 \end{equation}
 
-\subsection{Energéticas (Consumo de Energía)}
+\subsection{Energéticas (Consumo de Energía)} \label{ssec:metricas-energeticas}
 
 Para evaluar el desempeño energético del sistema con controlador implementado, es necesario cuantificar el consumo total de energía eléctrica por parte de los actuadores durante un ciclo operativo completo (un día simulado).
 
 En el Proyecto~1 se tomó un modelo específico de bomba de agua, mientras que para el ventilador se tomaron valores arbitrarios, en este proyecto se tomará una aproximación para la potencia consumida por cada actuador en función de la tensión aplicada a estos asumiendo que la corriente consumida es proporcional a la tensión aplicada (modelo lineal simplificado), en consecuencia, la potencia instantánea será proporcional al cuadrado de la tensión. La energía total acumulada ($E_{total}$) se calcula integrando numéricamente estas potencias en el tiempo:
 
 \begin{equation}
-    E_{total}(t) = \int_{0}^{t} \left( \frac{V_{bomb}(\tau)^2}{R_{bomb}} + \frac{V_{vent}(\tau)^2}{R_{vent}} \right)\,d\tau \quad [\si{\joule}]
+    E_{total}(t) = \int_{0}^{t} \left( \frac{V_{bomb}(\tau)^2}{R_{bomb}} + \frac{V_{vent}(\tau)^2}{R_{vent}} \right)\,d\tau \quad [\unit{\joule}]
 \end{equation}
 
 Donde $R_{bomb}$ y $R_{vent}$ son las resistencias equivalentes estimadas de los actuadores. Esta métrica penaliza el uso de voltajes altos, reflejando fielmente el costo operativo real.
 
 \begin{itemize}
-    \item $\mathbf{R_\text{vent}}$: Los ventiladores trabajan comúnmente potencias entre \SI{5}{\watt} y \SI{15}{\watt}, para el ventilador se tomó una aproximación de \SI{12}{\watt} de potencia nominal, de esta forma podemos realizar aproximaciones de la resistencia equivalente:
+    \item $\mathbf{R_\text{vent}}$: Los ventiladores trabajan comúnmente potencias entre \qty{5}{\watt} y \qty{15}{\watt}, para el ventilador se tomó una aproximación de \qty{12}{\watt} de potencia nominal, de esta forma podemos realizar aproximaciones de la resistencia equivalente:
           \begin{equation*}
-              P_\text{max, vent} = \frac{(V_\text{nom})^2}{R_\text{vent}} \implies \SI{12}{\watt} = \frac{(\SI{12}{\volt})^2}{R_\text{vent}} \implies \boxed{R_\text{vent} = \SI{12}{\ohm}}
+              P_\text{max, vent} = \frac{(V_\text{nom})^2}{R_\text{vent}} \implies \qty{12}{\watt} = \frac{(\qty{12}{\volt})^2}{R_\text{vent}} \implies \boxed{R_\text{vent} = \qty{12}{\ohm}}
           \end{equation*}
-    \item $\mathbf{R_\text{bomb}}$: La bomba de agua utilizada corresponde a la bomba \textbf{\textit{Iwaki RD-20}} \Cite{datasheet_bomba}, la cual funciona a \SI{60}{\watt} a su tensión nominal de \SI{24}{\volt}, con estos datos se obtiene su resistencia equivalente:
+    \item $\mathbf{R_\text{bomb}}$: La bomba de agua utilizada corresponde a la bomba \textbf{\textit{Iwaki RD-20}} \Cite{datasheet_bomba}, la cual funciona a \qty{60}{\watt} a su tensión nominal de \qty{24}{\volt}, con estos datos se obtiene su resistencia equivalente:
           \begin{equation*}
-              P_\text{max, bomb} = \frac{(V_\text{nom})^2}{R_\text{bomb}} \implies \SI{60}{\watt} = \frac{(\SI{24}{\watt})^2}{R_\text{bomb}} \implies \boxed{R_\text{bomb} = \frac{48}{5}~\si{\ohm}}
+              P_\text{max, bomb} = \frac{(V_\text{nom})^2}{R_\text{bomb}} \implies \qty{60}{\watt} = \frac{(\qty{24}{\watt})^2}{R_\text{bomb}} \implies \boxed{R_\text{bomb} = \frac{48}{5}~\unit{\ohm}}
           \end{equation*}
 \end{itemize}
 
@@ -175,7 +201,7 @@ Para la resolución computacional de este sistema de ecuaciones diferenciales no
 
 Para evaluar el desempeño del sistema de control propuesto, se diseñaron diversos escenarios de simulación que replican condiciones operativas típicas y extremas. Estos escenarios corresponden a variaciones en la irradiancia solar y en la temperatura ambiente los cuales constituirán diferentes perfiles de carga térmica en el panel fotovoltaico.
 
-Todos los escenarios a continuación parten del mismo escenario de temperatura ambiente e irradiancia solar y velocidad del viento definidos en el proyecto anterior, el cual simula un día típico soleado y despejado.
+Todos los escenarios a continuación parten del mismo escenario de temperatura ambiente, irradiancia solar y velocidad del viento definidos en el Proyecto 1, el cual simula un día típico soleado y despejado.
 
 \subsubsection*{Escenario Base}
 
@@ -205,7 +231,7 @@ Esta configuración de perturbaciones fue desarrollado en el proyecto anterior r
 \end{equation}
 
 \begin{equation}
-    v_\text{vien}(t) = 5+3\sin\left(\frac{2\pi}{24\cdot3600}\,t \right) , \quad \text{ con $t$ en } \si{\second}
+    v_\text{vien}\left(t_h = \frac{t}{3600}\right) = 5+3\sin\left(\frac{2\pi}{24}\,t_h \right) , \quad \text{ con $t_h$ en } \unit{\hour}
     \label{eq:velocidad-viento}
 \end{equation}
 
@@ -222,45 +248,82 @@ Este escenario corresponde directamente al caso base original usado en el proyec
     \centering
     \begin{tabular}{ll}
         \hline
-        \textbf{Parámetro} & \textbf{Valor}                     \\ \hline
-        $T_N$              & \SI{10}{\degreeCelsius}            \\
-        $T_x$              & \SI{35.2}{\degreeCelsius}          \\
-        $T_s$              & \SI{25.1018}{\degreeCelsius}       \\
-        $t_\text{min}$     & \SI{6.5}{\hour}                    \\
-        $t_\text{set}$     & \SI{20.5}{\hour}                   \\
-        $b$                & 2,5                                \\
-        $\alpha$           & 1,8                                \\
-        $G_\text{max}$     & \SI{1000}{\watt\per\meter\squared} \\
-        $t_\text{rise}$    & \SI{6.5}{\hour}
+        \textbf{Parámetro} & \textbf{Valor}                      \\ \hline
+        $T_N$              & \qty{10}{\degreeCelsius}            \\
+        $T_x$              & \qty{35.2}{\degreeCelsius}          \\
+        $T_s$              & \qty{25.1018}{\degreeCelsius}       \\
+        $t_\text{min}$     & \qty{6.5}{\hour}                    \\
+        $t_\text{set}$     & \qty{20.5}{\hour}                   \\
+        $b$                & 2,5                                 \\
+        $\alpha$           & 1,8                                 \\
+        $G_\text{max}$     & \qty{1000}{\watt\per\meter\squared} \\
+        $t_\text{rise}$    & \qty{6.5}{\hour}
         \\ \hline
     \end{tabular}
     \caption{Valores usados para la generación de $T_\text{amb}$ y $G$ para el día soleado}
     \label{tab:valores-escenario-1}
 \end{table}
 
+Toda esta configuración de temperatura ambiente e irradiancia solar se refleja en la Figura \ref{fig:plot:pert-dia-despejado}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-despejado-temp-amb.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-despejado-temp-amb}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-despejado-irr-sol.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-despejado-irr-sol}
+    \end{subfigure}
+    \caption{\textbf{(a)} Temperatura Ambiente ($T_\text{amb}$). \textbf{(b)} Irradiancia Solar ($G$)}
+    \label{fig:plot:pert-dia-despejado}
+\end{figure}
+
 \subsubsection{Día Nublado}
 
-En este escenario, para simular condiciones de nubosidad, se reduce significativamente la irradiancia solar incidente sobre el panel fotovoltaico. Para ello, se ajusta el valor máximo de irradiancia $G_\text{max}$ en la ecuación \ref{eq:irradiancia-solar} a un valor reducido de \SI{500}{\watt\per\meter\squared}, además se modifican algunos valores en la tabla \ref{tab:valores-escenario-1} para reflejar un día más frío y con menor temperatura máxima:
+En este escenario, para simular condiciones de nubosidad, se reduce significativamente la irradiancia solar incidente sobre el panel fotovoltaico. Para ello, se ajusta el valor máximo de irradiancia $G_\text{max}$ en la ecuación \ref{eq:irradiancia-solar} a un valor reducido de \qty{500}{\watt\per\meter\squared}, además se modifican algunos valores en la tabla \ref{tab:valores-escenario-1} para reflejar un día más frío y con menor temperatura máxima:
 
 \begin{table}[H]
     \centering
     \begin{tabular}{ll}
         \hline
-        \textbf{Parámetro} & \textbf{Valor}                    \\ \hline
-        $T_N$              & \SI{12}{\degreeCelsius}           \\
-        $T_x$              & \SI{25}{\degreeCelsius}           \\
-        $T_s$              & \SI{20}{\degreeCelsius}           \\
-        $t_\text{min}$     & \SI{6.5}{\hour}                   \\
-        $t_\text{set}$     & \SI{20.5}{\hour}                  \\
-        $b$                & 2,5                               \\
-        $\alpha$           & 1,8                               \\
-        $G_\text{max}$     & \SI{500}{\watt\per\meter\squared} \\
-        $t_\text{rise}$    & \SI{6.5}{\hour}                   \\ \hline
+        \textbf{Parámetro} & \textbf{Valor}                     \\ \hline
+        $T_N$              & \qty{12}{\degreeCelsius}           \\
+        $T_x$              & \qty{25}{\degreeCelsius}           \\
+        $T_s$              & \qty{20}{\degreeCelsius}           \\
+        $t_\text{min}$     & \qty{6.5}{\hour}                   \\
+        $t_\text{set}$     & \qty{20.5}{\hour}                  \\
+        $b$                & 2,5                                \\
+        $\alpha$           & 1,8                                \\
+        $G_\text{max}$     & \qty{500}{\watt\per\meter\squared} \\
+        $t_\text{rise}$    & \qty{6.5}{\hour}                   \\ \hline
     \end{tabular}
     \caption{Valores usados para la generación de $T_\text{amb}$ y $G$ para el día nublado}
     \label{tab:valores-escenario-2}
 \end{table}
 
+Toda esta configuración de temperatura ambiente e irradiancia solar se refleja en la Figura \ref{fig:plot:pert-dia-nublado}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-nublado-temp-amb.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-nublado-temp-amb}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-nublado-irr-sol.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-nublado-irr-sol}
+    \end{subfigure}
+    \caption{\textbf{(a)} Temperatura Ambiente ($T_\text{amb}$). \textbf{(b)} Irradiancia Solar ($G$)}
+    \label{fig:plot:pert-dia-nublado}
+\end{figure}
 
 \subsubsection{Día Parcialmente Nublado (Intermitente)}
 
@@ -273,7 +336,26 @@ A diferencia de los escenarios anteriores que presentan variaciones lentas y con
     \item \textbf{Enfriamiento Ambiental (Inercial):} Se modeló la caída de temperatura del aire asociada al oscurecimiento, aplicando un desfase temporal y una suavización de la curva para representar la inercia térmica atmosférica.
 \end{enumerate}
 
-La formulación matemática detallada de estas funciones de perturbación, así como los parámetros temporales de periodicidad y factores de atenuación utilizados, se encuentran descritos en el Apéndice \ref{app:A} resultando en las siguientes expresiones para la generación de $G$ y $T_\text{amb}$:
+La formulación matemática detallada de estas funciones de perturbación, así como los parámetros temporales de periodicidad y factores de atenuación utilizados, se encuentran descritos en el Apéndice \ref{app:A}.
+
+Toda esta configuración de temperatura ambiente e irradiancia solar se refleja en la Figura \ref{fig:plot:pert-dia-intermitente}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-intermitente-temp-amb.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-intermitente-temp-amb}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{plots/pert-dia-intermitente-irr-sol.pdf}
+        \caption{}
+        \label{fig:plot:pert-dia-intermitente-irr-sol}
+    \end{subfigure}
+    \caption{\textbf{(a)} Temperatura Ambiente ($T_\text{amb}$). \textbf{(b)} Irradiancia Solar ($G$)}
+    \label{fig:plot:pert-dia-intermitente}
+\end{figure}
 
 \subsubsection{Entorno Controlado para Análisis de Métricas} \label{sssec:entorno-controlado}
 
@@ -282,28 +364,26 @@ Para aplicar correctamente las métricas de desempeño temporal definidas en la 
 A continuación se detallan las condiciones específicas del entorno controlado:
 
 \begin{itemize}
-    \item \textbf{Irradiancia Solar:} Se fija un valor de irradiancia solar constante de \SI{800}{\watt\per\meter\squared}.
-    \item \textbf{Temperatura Ambiente: }Se fija un valor de \SI{30}{\degreeCelsius}
-    \item \textbf{Velocidad del Viento: }Se fija una velocidad constante de \SI{5}{\meter\per\second}.
+    \item \textbf{Irradiancia Solar:} Se fija un valor de irradiancia solar constante de \qty{800}{\watt\per\meter\squared}.
+    \item \textbf{Temperatura Ambiente: }Se fija un valor de \qty{30}{\degreeCelsius}
+    \item \textbf{Velocidad del Viento: }Se fija una velocidad constante de \qty{5}{\meter\per\second}.
 \end{itemize}
 
-En lo referente al escalón de referencia de temperatura ($Ref$), el sistema se inicia con condiciones iniciales de \SI{30}{\degreeCelsius} con una referencia de \SI{45}{\degreeCelsius} la cual se espera una hora hasta que los valores se estabilizan, posteriormente se produce un escalón de referencia establecido en \SI{55}{\degreeCelsius}, generando una variación de \SI{15}{\degreeCelsius} que permite observar la respuesta transitoria del sistema bajo condiciones controladas, aplicando las métricas definidas previamente.
+En lo referente al escalón de referencia de temperatura ($Ref$), el sistema se inicia con condiciones iniciales de \qty{30}{\degreeCelsius} con una referencia de \qty{45}{\degreeCelsius} la cual se espera una hora hasta que los valores se estabilizan, posteriormente se produce un escalón de referencia establecido en \qty{55}{\degreeCelsius}, generando una variación de \qty{15}{\degreeCelsius} que permite observar la respuesta transitoria del sistema bajo condiciones controladas, aplicando las métricas definidas previamente.
 
 \subsection{Pruebas/Simulaciones a Realizar}
 
-Con el fin de evaluar exhaustivamente el desempeño del sistema de control propuesto, se planifican las siguientes simulaciones y pruebas:
+Con el fin de evaluar exhaustivamente el desempeño del sistema de control propuesto cubriendo todas las indicaciones dadas en la guía del Proyecto 2, se planifican las siguientes simulaciones y pruebas:
 
 
 
 \begin{itemize}
-    \item \textbf{Simulación en Lazo Abierto:} Se ejecutará una simulación del sistema sin la implementación del controlador, aplicando las condiciones de los tres escenarios definidos (Día Soleado, Día Nublado, Día Parcialmente Nublado). El objetivo es caracterizar la respuesta natural del sistema y establecer una línea base para comparación.
+    \item \textbf{Simulación en Lazo Abierto:} Se ejecutará una simulación del sistema sin la implementación del controlador, aplicando únicamente las condiciones del día despejado. El objetivo es caracterizar la respuesta natural del sistema y establecer una línea base para comparación.
 
     \item \textbf{Ajuste de Ganancia Proporcional ($K_c$):} Se realizarán múltiples simulaciones iterativas variando el valor de la ganancia proporcional $K_c$ sobre el mismo escenario base (El día soleado y despejado). El objetivo es identificar el valor óptimo que más se adapte a las especificación de respuesta definidas previamente.
 
-    \item \textbf{Simulación en Lazo Cerrado:} Se realizará una simulación con el controlador implementado, evaluando su desempeño bajo las mismas condiciones ambientales de los tres escenarios utilizados en las simulaciones en lazo abierto. Esto permitirá analizar la efectividad del controlador en la regulación de la temperatura.
-
     \item \textbf{Simulación en Entorno Controlado:} Se llevará a cabo una simulación específica en el entorno controlado descrito en la Sección \ref{ssec:escenarios-de-simulacion}. Esta prueba se centrará en la evaluación de las métricas temporales de desempeño del sistema, permitiendo un análisis sin la presencia de perturbaciones.
 
-\end{itemize}
+    \item \textbf{Simulación en Lazo Cerrado:} Se ejecutará una simulación con el controlador implementado, evaluando su desempeño bajo las condiciones ambientales de los tres escenarios de perturbaciones definidos en la Sección \ref{ssec:escenarios-de-simulacion}. Esto permitirá analizar la efectividad del controlador en la regulación de la temperatura y la cuantificación del rendimiento energético, utilizando la métrica definida para este propósito (Sección \ref{ssec:metricas-energeticas}).
 
-BSFI
+\end{itemize}

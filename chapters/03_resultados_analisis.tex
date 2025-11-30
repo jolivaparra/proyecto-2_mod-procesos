@@ -9,10 +9,10 @@ En esta prueba, el sistema es sometido a las perturbaciones estandarizadas del `
 La Figura~\ref{fig:plot:lazo_abierto} muestra la respuesta temporal obtenida bajo estas condiciones.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{plots/temp-panel-actuadores-sin-control.pdf}
-    \caption{Respuesta dinámica del sistema en Lazo Abierto ante una entrada tipo escalón en horas de mayor carga térmica con perturbaciones de día despejado.}
-    \label{fig:plot:lazo_abierto}
+      \centering
+      \includegraphics[width=1\textwidth]{plots/temp-panel-actuadores-sin-control.pdf}
+      \caption{Respuesta dinámica del sistema en Lazo Abierto ante una entrada tipo escalón en horas de mayor carga térmica con perturbaciones de día despejado.}
+      \label{fig:plot:lazo_abierto}
 \end{figure}
 
 \subsection*{Análisis de la Respuesta Dinámica}
@@ -20,13 +20,13 @@ La Figura~\ref{fig:plot:lazo_abierto} muestra la respuesta temporal obtenida baj
 Del comportamiento observado en la gráfica, se desprenden las siguientes conclusiones sobre la planta:
 
 \begin{enumerate}
-    \item \textbf{Capacidad de Enfriamiento Suficiente:} Se observa que, al aplicar la señal de control fija (máxima capacidad), la temperatura máxima alcanzada es de aproximadamente \SI{51}{\degreeCelsius}. Este valor se encuentra por debajo del límite crítico de seguridad (\SI{55}{\degreeCelsius}) definido en las especificaciones de respuesta, lo que indica que los actuadores dimensionados tienen la capacidad física suficiente para disipar la carga térmica máxima del sistema si operan a plena potencia.
+      \item \textbf{Capacidad de Enfriamiento Suficiente:} Se observa que, al aplicar la señal de control fija (máxima capacidad), la temperatura máxima alcanzada es de aproximadamente \SI{51}{\degreeCelsius}. Este valor se encuentra por debajo del límite crítico de seguridad (\SI{55}{\degreeCelsius}) definido en las especificaciones de respuesta, lo que indica que los actuadores dimensionados tienen la capacidad física suficiente para disipar la carga térmica máxima del sistema si operan a plena potencia.
 
-    \item \textbf{Dependencia de las Perturbaciones:} A pesar de que la temperatura se mantiene en rangos seguros, la curva de salida sigue parcialmente la forma de la irradiancia solar (sube al mediodía y baja al atardecer). Esto evidencia que, en lazo abierto, el sistema es incapaz de rechazar perturbaciones completamente debido a la magnitud de la inercia térmica del ambiente, por lo cual la temperatura flota libremente en función del clima, sin mantener un punto de operación constante (Set-Point) debido al escalón.
+      \item \textbf{Dependencia de las Perturbaciones:} A pesar de que la temperatura se mantiene en rangos seguros, la curva de salida sigue parcialmente la forma de la irradiancia solar (sube al mediodía y baja al atardecer). Esto evidencia que, en lazo abierto, el sistema es incapaz de rechazar perturbaciones completamente debido a la magnitud de la inercia térmica del ambiente, por lo cual la temperatura flota libremente en función del clima, sin mantener un punto de operación constante (Set-Point) debido al escalón.
 
-    \item \textbf{Descenso Drástico de Temperatura en Activación:} Al momento de la activación del sistema el panel sufre un descenso de temperatura cercano a \qty{10}{\degreeCelsius}, esto en el día a día conlleva un estrés térmico constante a los materiales del panel reduciendo su vida útil.
+      \item \textbf{Descenso Drástico de Temperatura en Activación:} Al momento de la activación del sistema el panel sufre un descenso de temperatura cercano a \qty{10}{\degreeCelsius}, esto en el día a día conlleva un estrés térmico constante a los materiales del panel reduciendo su vida útil.
 
-    \item \textbf{Ineficiencia Energética (El Desafío de Consumo):} La señal escalón implica que los actuadores están operando a un nivel de tensión constante incluso en momentos donde la carga térmica es baja (mañana y tarde). Esto representa un desperdicio de energía significativo, ya que se está aplicando un esfuerzo de enfriamiento máximo cuando no es estrictamente necesario.
+      \item \textbf{Ineficiencia Energética (el desafío de consumo):} La señal escalón implica que los actuadores están operando a un nivel de tensión constante incluso en momentos donde la carga térmica es baja (mañana y tarde). Esto representa un desperdicio de energía significativo, ya que se está aplicando un esfuerzo de enfriamiento máximo cuando no es estrictamente necesario.
 \end{enumerate}
 
 \paragraph{Conclusión} Si bien la operación en lazo abierto puede satisfacer el requisito de seguridad térmica bajo estas condiciones ($\approx \SI{51}{\degreeCelsius}$), carece de capacidad de regulación y eficiencia. Esto justifica la implementación de una estrategia de control en \textbf{Lazo Cerrado} que module el esfuerzo de los actuadores para mantener la temperatura estable y minimizar el consumo.
@@ -40,32 +40,32 @@ El objetivo de esta comparativa es encontrar el compromiso óptimo entre la velo
 La Figura~\ref{fig:plot:comparativa-kp} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
 
 \begin{figure}[H]
-    \centering
-    \caption{Comparativa de valores $K_p$: cada línea corresponde al controlador con el valor de $K_p$ señalado.}
-    \label{fig:plot:comparativa-kp}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
-        \caption{Temperatura (\unit{\degreeCelsius}) del panel solar.}
-        \label{fig:plot:comparativa-kp-a}
-    \end{subfigure}
-    \hfil
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
-        \caption{Tensión (\unit{\volt}) aplicada en cada actuador.}
-        \label{fig:plot:comparativa-kp-b}
-    \end{subfigure}
+      \centering
+      \begin{subfigure}[t]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:comparativa-kp-a}
+            \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
+      \end{subfigure}
+      \hfil
+      \begin{subfigure}[t]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:comparativa-kp-b}
+            \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
+            \label{fig:plot:comparativa-kp}
+      \end{subfigure}
+      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel solar. \textbf{(b)} Tensión (\unit{\volt}) aplicada en cada actuador.}
 \end{figure}
 
 A partir de la visualización del comportamiento dinámico, se observan dos fenómenos contrapuestos:
 
 \begin{enumerate}
-    \item \textbf{Comportamiento con Altas Ganancias ($K_c = -1.0, -2.0$):}
-          Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:plot:comparativa-kp-b} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
-          Este fenómeno provoca cambios bruscos en la velocidad del ventilador, lo cual es indeseable mecánicamente y no se traduce en una mejora térmica significativa debido a la lenta inercia térmica del agua.
+      \item \textbf{Comportamiento con Altas Ganancias ($K_c = -1.0, -2.0$):}
+            Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:plot:comparativa-kp-b} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
+            Este fenómeno provoca cambios bruscos en la velocidad del ventilador, lo cual es indeseable mecánicamente y no se traduce en una mejora térmica significativa debido a la lenta inercia térmica del agua.
 
-    \item \textbf{Comportamiento con Bajas Ganancias ($K_c = -0.25$):}
-          Con una ganancia conservadora de $-0.25$, la respuesta de temperatura es más suave y libre de oscilaciones. Aunque presenta temperatura máxima ligeramente mayor a los demás, logra mantener la temperatura por debajo del límite de seguridad de \SI{55}{\degreeCelsius}.
-          Lo más relevante es que la señal de control (Voltaje) evoluciona suavemente, siguiendo la curva de irradiancia sin saltos abruptos, lo que maximiza la vida útil de los actuadores y de los materiales del panel solar.
+      \item \textbf{Comportamiento con Bajas Ganancias ($K_c = -0.25$):}
+            Con una ganancia conservadora de $-0.25$, la respuesta de temperatura es más suave con oscilaciones constantes pero menores. Aunque presenta temperatura máxima ligeramente mayor a los demás, logra mantener la temperatura por debajo del límite de seguridad de \SI{55}{\degreeCelsius}.
+            Lo más relevante es que la señal de control (Voltaje) evoluciona suavemente, siguiendo la curva de irradiancia sin saltos abruptos, lo que maximiza la vida útil de los actuadores y de los materiales del panel solar.
 \end{enumerate}
 
 \paragraph{Selección de Parámetros} Basado en este análisis, se selecciona $K_c = -0.25$ como la ganancia definitiva para el controlador. Esta sintonía prioriza la robustez y la suavidad de la actuación por sobre la velocidad de respuesta, dado que el sistema térmico es inherentemente lento y el criterio principal es la seguridad operativa ($T < \SI{55}{\degreeCelsius}$) junto a la eficiencia energética más que la precisión de seguimiento al Offset fijado.
@@ -78,8 +78,8 @@ La evaluación se realiza bajo el \textbf{Entorno Controlado} descrito en la Sec
 
 El protocolo de prueba consiste en una secuencia de dos etapas:
 \begin{enumerate}
-    \item \textbf{Pre-estabilización:} Se inicia la simulación con el panel a temperatura ambiente (\qty{30}{\degreeCelsius}) y el controlador operando con una referencia inicial de $Ref = \qty{45}{\degreeCelsius}$. Se permite que el sistema evolucione durante una hora ($t=0$ a $t=\qty{3600}{\second}$) hasta alcanzar el equilibrio.
-    \item \textbf{Prueba de Escalón (Step Test):} En el instante $t=\qty{1}{\hour}$, se aplica un cambio tipo escalón en la referencia, aumentando su valor a \qty{55}{\degreeCelsius}.
+      \item \textbf{Pre-estabilización:} Se inicia la simulación con el panel a temperatura ambiente (\qty{30}{\degreeCelsius}) y el controlador operando con una referencia inicial de $Ref = \qty{45}{\degreeCelsius}$. Se permite que el sistema evolucione durante una hora ($t=0$ a $t=\qty{3600}{\second}$) hasta alcanzar el equilibrio.
+      \item \textbf{Prueba de Escalón (Step Test):} En el instante $t=\qty{1}{\hour}$, se aplica un cambio tipo escalón en la referencia, aumentando su valor a \qty{55}{\degreeCelsius}.
 \end{enumerate}
 
 El análisis de métricas temporales ($T_r, T_s, M_p, e_{ss}$) se aplica específicamente sobre la respuesta del sistema durante esta segunda etapa (transición de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}).
@@ -87,37 +87,37 @@ El análisis de métricas temporales ($T_r, T_s, M_p, e_{ss}$) se aplica especí
 La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del sistema durante la prueba. Se observa la evolución de la temperatura (línea azul) intentando alcanzar la nueva referencia (línea roja discontinua) a partir del segundo cambio de escalón.
 
 \begin{figure}[H]
-    \centering
-    \caption{Respuesta transitoria del sistema controlado ante un escalón de referencia de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}.}
-    \label{fig:plot:entorno-controlado}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
-        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
-        \label{fig:plot:entorno-controlado-a}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
-        \caption{Tensión (\unit{\volt}) aplicada en los actuadores.}
-        \label{fig:plot:entorno-controlado-b}
-    \end{subfigure}
+      \centering
+      \caption{Respuesta transitoria del sistema controlado ante un escalón de referencia de \qty{45}{\degreeCelsius} a \qty{55}{\degreeCelsius}.}
+      \label{fig:plot:entorno-controlado}
+      \begin{subfigure}[b]{0.45\textwidth}
+            \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
+            \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
+            \label{fig:plot:entorno-controlado-a}
+      \end{subfigure}
+      \begin{subfigure}[b]{0.45\textwidth}
+            \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
+            \caption{Tensión (\unit{\volt}) aplicada en los actuadores.}
+            \label{fig:plot:entorno-controlado-b}
+      \end{subfigure}
 \end{figure}
 
 A partir de esta respuesta, se calcularon las métricas de desempeño definidas en la metodología. Los resultados se presentan en la Tabla~\ref{tab:metricas}.
 
 \begin{table}[H]
-    \centering
-    \begin{tabular}{|l|c|c|}
-        \hline
-        \textbf{Métrica}               & \textbf{Símbolo} & \textbf{Valor Obtenido}    \\
-        \hline
-        Tiempo de Subida               & $T_r$            & \qty{16.81}{\minute}       \\
-        Tiempo de Estabilización (1\%) & $T_s$            & \qty{21.56}{\minute}       \\
-        Sobrepaso Máximo               & $M_p$            & \qty{0.13}{\degreeCelsius} \\
-        Error de Estado Estacionario   & $e_{ss}$         & \qty{5.54}{\degreeCelsius} \\
-        \hline
-    \end{tabular}
-    \caption{Resumen de métricas de desempeño temporal para $K_c = -0.25$.}
-    \label{tab:metricas}
+      \centering
+      \begin{tabular}{|l|c|c|}
+            \hline
+            \textbf{Métrica}               & \textbf{Símbolo} & \textbf{Valor Obtenido}    \\
+            \hline
+            Tiempo de Subida               & $T_r$            & \qty{16.81}{\minute}       \\
+            Tiempo de Estabilización (5\%) & $T_s$            & \qty{21.56}{\minute}       \\
+            Sobrepaso Máximo               & $M_p$            & \qty{0.13}{\degreeCelsius} \\
+            Error de Estado Estacionario   & $e_{ss}$         & \qty{5.54}{\degreeCelsius} \\
+            \hline
+      \end{tabular}
+      \caption{Resumen de métricas de desempeño temporal para $K_c = -0.25$.}
+      \label{tab:metricas}
 \end{table}
 
 \subsection*{Análisis de Desempeño}
@@ -125,21 +125,21 @@ A partir de esta respuesta, se calcularon las métricas de desempeño definidas 
 A partir de los datos obtenidos en la Tabla~\ref{tab:metricas}, se desprenden las siguientes conclusiones técnicas sobre la calidad del control implementado:
 
 \begin{enumerate}
-    \item \textbf{Respuesta Subamortiguada con Oscilación Residual:}
-          Se registra un sobrepaso máximo de \qty{0.13}{\degreeCelsius} y una oscilación sostenida de baja amplitud en torno al valor final. Esto clasifica el comportamiento como \textbf{subamortiguado}.
-          Si bien existe oscilación perpetua (ciclo límite), su amplitud es marginal ($< 0.3\%$ de la referencia). En términos prácticos, esta magnitud es despreciable frente a la inercia térmica del panel y no representa un riesgo de fatiga mecánica para los actuadores ni estrés térmico para el material.
+      \item \textbf{Respuesta Subamortiguada con Oscilación Residual:}
+            Se registra un sobrepaso máximo de \qty{0.13}{\degreeCelsius} y una oscilación sostenida de baja amplitud en torno al valor final. Esto clasifica el comportamiento como \textbf{subamortiguado}.
+            Si bien existe oscilación perpetua (ciclo límite), su amplitud es marginal ($< 0.3\%$ de la referencia). En términos prácticos, esta magnitud es despreciable frente a la inercia térmica del panel y no representa un riesgo de fatiga mecánica para los actuadores ni estrés térmico para el material.
 
-    \item \textbf{Dinámica Temporal ($T_r, T_s$):}
-          Los tiempos de respuesta (subida en $\approx \qty{17}{\minute}$ y estabilización en $\approx \qty{22}{\minute}$) confirman la alta inercia térmica de la masa de agua. El controlador respeta la dinámica natural de la planta sin forzar una actuación agresiva que podría saturar innecesariamente la bomba, logrando un compromiso adecuado entre velocidad de enfriamiento y suavidad operativa.
+      \item \textbf{Dinámica Temporal ($T_r, T_s$):}
+            Los tiempos de respuesta (subida en $\approx \qty{17}{\minute}$ y estabilización en $\approx \qty{22}{\minute}$) confirman la alta inercia térmica de la masa de agua. El controlador respeta la dinámica natural de la planta sin forzar una actuación agresiva que podría saturar innecesariamente la bomba, logrando un compromiso adecuado entre velocidad de enfriamiento y suavidad operativa.
 
-    \item \textbf{Margen de Seguridad Pasivo ($e_{ss}$):}
-          Se observa un Error de Estado Estacionario de \qty{5.54}{\degreeCelsius}. Al utilizar un controlador Proporcional sin acción integral, este error es matemáticamente esperado.
-          Es fundamental notar la dirección del error: la temperatura se estabiliza en $\approx \qty{49.5}{\degreeCelsius}$ para una referencia de \qty{55}{\degreeCelsius}. Esto actúa como un \textbf{margen de seguridad} de casi \qty{6}{\degreeCelsius} a favor del sistema, garantizando que la temperatura operativa se mantenga lejos del límite crítico de degradación.
+      \item \textbf{Margen de Seguridad Pasivo ($e_{ss}$):}
+            Se observa un Error de Estado Estacionario de \qty{5.54}{\degreeCelsius}. Al utilizar un controlador Proporcional sin acción integral, este error es matemáticamente esperado.
+            Es fundamental notar la dirección del error: la temperatura se estabiliza en $\approx \qty{49.5}{\degreeCelsius}$ para una referencia de \qty{55}{\degreeCelsius}. Esto actúa como un \textbf{margen de seguridad} de casi \qty{6}{\degreeCelsius} a favor del sistema, garantizando que la temperatura operativa se mantenga lejos del límite crítico de degradación. El error determinado está directamente asociado a la elección de un valor de Offset.
 \end{enumerate}
 
 \section{Validación ante Escenarios de Perturbación Dinámica}
 
-Una vez verificado el desempeño transitorio en condiciones ideales, se sometió el sistema de control a los perfiles de perturbación de 24 horas definidos en la metodología. El objetivo de esta sección es validar la capacidad del controlador para mantener la temperatura del panel dentro de los límites de seguridad ($T_p < \SI{55}{\degreeCelsius}$) bajo distintas condiciones operativas.
+Una vez verificado el desempeño transitorio en condiciones ideales, se sometió el sistema de control a los perfiles de perturbación de 24 horas definidos en la Sección \ref{ssec:escenarios-de-simulacion}. El objetivo de esta sección es validar la capacidad del controlador para mantener la temperatura del panel dentro de los límites de seguridad ($T_p < \SI{55}{\degreeCelsius}$) bajo distintas condiciones operativas.
 
 A continuación, se analiza la respuesta del sistema controlado ($K_c = -0.25$) frente a los tres escenarios climáticos planteados.
 
@@ -147,80 +147,86 @@ A continuación, se analiza la respuesta del sistema controlado ($K_c = -0.25$) 
 
 Se simuló el comportamiento bajo el perfil de ``Día Soleado'', el cual representa la condición más exigente para los actuadores (irradiancia pico de \qty{1000}{\watt\per\meter\squared}).
 
+La Figura \ref{fig:plot:dia-despejado} muestra la evolución de la temperatura del panel y la tensión aplicada a los actuadores durante las 24 horas.
+
 \begin{figure}[H]
-    \centering
-    \caption{Simulaciones del controlador para un día soleado/despejado}
-    \label{fig:plot:dia-despejado}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-despejado-temp-panel.pdf}
-        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
-        \label{fig:plot:dia-despejado-a}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-despejado-volt.pdf}
-        \caption{Tensión (\unit{\volt}) aplicada a los actuadores.}
-        \label{fig:plot:dia-despejado-b}
-    \end{subfigure}
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-despejado-a}
+            \includegraphics[width=\textwidth]{plots/dia-despejado-temp-panel.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-despejado-b}
+            \includegraphics[width=\textwidth]{plots/dia-despejado-volt.pdf}
+      \end{subfigure}
+      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel. \textbf{(b)} Tensión (\unit{\volt}) aplicada a los actuadores.}
+      \label{fig:plot:dia-despejado}
 \end{figure}
 \paragraph{Análisis}
 \begin{itemize}
-    \item \textbf{Seguridad Térmica:} Durante las horas de máxima radiación, la temperatura se estabiliza por debajo de los \qty{50}{\degreeCelsius}, cumpliendo holgadamente el requisito de seguridad ($< \SI{55}{\degreeCelsius}$) en el peor caso posible.
-    \item \textbf{Actuación Progresiva:} La señal de control evoluciona suavemente siguiendo la curva solar, sin presentar saturaciones bruscas que dañen los motores.
+      \item \textbf{Seguridad Térmica:} Durante las horas de máxima radiación, la temperatura se estabiliza por debajo de los \qty{50}{\degreeCelsius}, cumpliendo holgadamente el requisito de seguridad ($< \SI{55}{\degreeCelsius}$) en el peor caso posible.
+      \item \textbf{Actuación Progresiva:} La señal de control evoluciona suavemente siguiendo la curva solar, sin presentar saturaciones bruscas que dañen los motores.
+      \item \textbf{Bajo Consumo Energético:} El bajo consumo del ventilador confirma la elección de la ganancia a pesar del ligero aumento en la temperatura máxima, ya que la modulación suave del voltaje eficiencia energética destacable.
 \end{itemize}
 
 \subsection{Escenario 2: Carga Reducida (Día Nublado)}
 
 Este escenario simula un día con baja irradiancia ($G_{max} = \qty{500}{\watt\per\meter\squared}$), útil para verificar que el sistema no desperdicie energía sobre-enfriando el panel cuando no es necesario.
 
+La Figura~\ref{fig:plot:dia-nublado} presenta los resultados obtenidos.
+
 \begin{figure}[H]
-    \centering
-    \caption{Simulaciones del controlador para un día nublado.}
-    \label{fig:dia-nublado}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-nublado-temp-panel.pdf}
-        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
-        \label{fig:dia:nublado-a}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-nublado-volt.pdf}
-        \caption{Tensión (\unit{\volt}) aplicada a los actuadores}
-        \label{fig:dia:nublado-b}
-    \end{subfigure}
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-nublado-a}
+            \includegraphics[width=\textwidth]{plots/dia-nublado-temp-panel.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-nublado-b}
+            \includegraphics[width=\textwidth]{plots/dia-nublado-volt.pdf}
+      \end{subfigure}
+      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel. \textbf{(b)} Tensión (\unit{\volt}) aplicada a los actuadores.}
+      \label{fig:plot:dia-nublado}
 \end{figure}
 
 \paragraph{Análisis}
 \begin{itemize}
-    \item \textbf{Adaptabilidad Energética:} Se observa que, debido a la menor carga térmica, el esfuerzo de control (voltaje) es significativamente menor que en el día despejado.
-    \item \textbf{Prevención de Sobre-enfriamiento:} El sistema mantiene la temperatura cercana a la referencia sin forzar los actuadores al máximo, validando que el algoritmo proporcional ajusta su intensidad según la demanda real.
+      \item \textbf{Adaptabilidad Energética:} Se observa que, debido a la menor carga térmica, el esfuerzo de control (voltaje) es significativamente menor que en el día despejado.
+      \item \textbf{Prevención de Sobre-enfriamiento:} El sistema mantiene la temperatura cercana a la referencia sin forzar los actuadores al máximo, validando que el algoritmo proporcional ajusta su intensidad según la demanda real.
+      \item \textbf{Oscilaciones Dentro del Rango Permitido:} Si bien la temperatura del panel presenta pequeñas oscilaciones residuales de alta frecuencia en las horas de mayor carga, la amplitud de estas variaciones se mantiene significativamente por debajo del umbral de tolerancia de \qty{2}{\degreeCelsius} establecido en las especificaciones de respuesta, garantizando la estabilidad y previniendo la fatiga por ciclo térmico.
 \end{itemize}
 
-\subsection{Escenario 3: Variación Rápida (Día Intermitente)}
+\subsection{Escenario 3: Día Parcialmente Nublado (Día Intermitente)}
 
 Finalmente, se evaluó la respuesta ante cambios abruptos de nubosidad para probar la velocidad de reacción del lazo cerrado.
 
 \begin{figure}[H]
-    \centering
-    \caption{Simulaciones del controlador para un día parcialmente nublado (Intermitente).}
-    \label{fig:plot:dia-intermitente}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-intermitente-temp-panel.pdf}
-        \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
-        \label{fig:plot:dia-intermitente-a}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{plots/dia-intermitente-volt.pdf}
-        \caption{Tensión (\unit{\volt}) aplicada a los actuadores.}
-        \label{fig:plot:dia-intermitente-b}
-    \end{subfigure}
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-intermitente-a}
+            \includegraphics[width=\textwidth]{plots/dia-intermitente-temp-panel.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.45\textwidth}
+            \caption{}
+            \label{fig:plot:dia-intermitente-b}
+            \includegraphics[width=\textwidth]{plots/dia-intermitente-volt.pdf}
+      \end{subfigure}
+      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel. \textbf{(b)} Tensión (\unit{\volt}) aplicada a los actuadores.}
+      \label{fig:plot:dia-intermitente}
 \end{figure}
 
 \paragraph{Análisis}
 \begin{itemize}
-    \item \textbf{Rechazo a Perturbaciones:} Al producirse una caída abrupta de irradiancia (paso de nube), el controlador reduce casi instantáneamente el voltaje de los actuadores, evitando el gasto innecesario de energía.
-    \item \textbf{Estabilidad:} A pesar de la naturaleza cuadrada de la perturbación solar, la temperatura del panel varía suavemente gracias a la inercia térmica, manteniéndose siempre en rangos seguros y estables.
+      \item \textbf{Rechazo a Perturbaciones:} Al producirse una caída abrupta de irradiancia (paso de nube), el controlador reduce rápidamente el voltaje de los actuadores, evitando el gasto innecesario de energía.
+      \item \textbf{Estabilidad:} A pesar de la naturaleza cuadrada de la perturbación solar, la temperatura del panel varía suavemente gracias a la inercia térmica, manteniéndose siempre en rangos seguros y estables.
 \end{itemize}
 
 \section{Análisis de Eficiencia Energética}
@@ -229,37 +235,37 @@ Finalmente, se evaluó la viabilidad económica del diseño cuantificando el cos
 
 \subsection{Comparación: Lazo Abierto vs. Lazo Cerrado}
 
-Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a una operación en Lazo Abierto con señal fija ($V_{vent}=\qty{12}{\volt}, V_{bomb}=\qty{3}{\volt}$) bajo el escenario de mayor demanda (Día Soleado). En las Figuras \ref{fig:plot:energia-consumida-lazo-abierto} y \ref{fig:plot:energia-consumida-lazo-cerrado} se observa la energía acomulada a lo largo del día mencionado.
+Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a la operación en Lazo Abierto con señal fija ($V_{vent}=\qty{12}{\volt}, V_{bomb}=\qty{3}{\volt}$) bajo el escenario de mayor demanda (Día Soleado), los resultados de estas entradas en el panel solar fueron mostrados en la Figura~\ref{fig:diag:lazo-abierto}. En las Figuras \ref{fig:plot:energia-consumida-lazo-abierto} y \ref{fig:plot:energia-consumida-lazo-cerrado} se observa la energía acomulada a lo largo del día mencionado.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{plots/energia-lazo-abierto.pdf}
-    \caption{Energía Consumida por el sistema de regriferación en Lazo Abierto.}
-    \label{fig:plot:energia-consumida-lazo-abierto}
+      \centering
+      \includegraphics[width=0.8\textwidth]{plots/energia-lazo-abierto.pdf}
+      \caption{Energía Consumida por el sistema de regriferación en Lazo Abierto.}
+      \label{fig:plot:energia-consumida-lazo-abierto}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{plots/energia-dia-despejado.pdf}
+      \centering
+      \includegraphics[width=0.8\textwidth]{plots/energia-dia-despejado.pdf}
 
-    \caption{Energía Consumida por el sistema de regriferación en Lazo Cerrado.}
-    \label{fig:plot:energia-consumida-lazo-cerrado}
+      \caption{Energía Consumida por el sistema de regriferación en Lazo Cerrado.}
+      \label{fig:plot:energia-consumida-lazo-cerrado}
 \end{figure}
 
 La Tabla~\ref{tab:ahorro_global} resume el impacto del control en el ahorro total.
 
 \begin{table}[H]
-    \centering
-    \begin{tabular}{|l|c|c|c|}
-        \hline
-        \textbf{Estrategia}      & \textbf{Energía Total}         & \textbf{Ahorro Absoluto}       & \textbf{\% Ahorro}    \\
-        \hline
-        Lazo Abierto (Base)      & \qty{0.720}{\kilo\watt{}\hour} & -                              & -                     \\
-        Lazo Cerrado (Propuesto) & \qty{0.037}{\kilo\watt{}\hour} & \qty{0.068}{\kilo\watt{}\hour} & \qty{94.86}{\percent} \\
-        \hline
-    \end{tabular}
-    \caption{Cuantificación del ahorro energético diario.}
-    \label{tab:ahorro_global}
+      \centering
+      \begin{tabular}{|l|c|c|c|}
+            \hline
+            \textbf{Estrategia}      & \textbf{Energía Total}         & \textbf{Ahorro Absoluto}       & \textbf{\% Ahorro}    \\
+            \hline
+            Lazo Abierto (Base)      & \qty{0.720}{\kilo\watt{}\hour} & -                              & -                     \\
+            Lazo Cerrado (Propuesto) & \qty{0.037}{\kilo\watt{}\hour} & \qty{0.063}{\kilo\watt{}\hour} & \qty{94.86}{\percent} \\
+            \hline
+      \end{tabular}
+      \caption{Cuantificación del ahorro energético diario.}
+      \label{tab:ahorro_global}
 \end{table}
 
 \subsection{Desglose por Escenarios Climáticos}
@@ -267,26 +273,26 @@ La Tabla~\ref{tab:ahorro_global} resume el impacto del control en el ahorro tota
 Además del ahorro base, se verificó la capacidad del controlador para reducir el consumo en días de menor carga térmica. La Tabla~\ref{tab:res:desglose_escenarios} detalla el aporte de cada actuador según el clima.
 
 \begin{table}[H]
-    \centering
-    \begin{tabular}{|l|c|c|c|}
-        \hline
-        \textbf{Escenario} & \textbf{E. Ventilador (\unit{\kilo\watt{}\hour})} & \textbf{E. Bomba (\unit{\kilo\watt{}\hour})} & \textbf{Total Diario (\unit{\kilo\watt{}\hour})} \\
-        \hline
-        Día Soleado (Máx)  & 0.027                                             & 0.010                                        & 0.037                                            \\
-        Día Intermitente   & 0.003                                             & 0.004                                        & 0.007                                            \\
-        Día Nublado (Mín)  & 0.019                                             & 0.009                                        & 0.027                                            \\
-        \hline
-    \end{tabular}
-    \caption{Consumo energético (\unit{\kilo\watt{}\hour}) desagregado por actuador y condición climática.}
-    \label{tab:res:desglose_escenarios}
+      \centering
+      \begin{tabular}{|l|c|c|c|}
+            \hline
+            \textbf{Escenario} & \textbf{E. Ventilador (\unit{\kilo\watt{}\hour})} & \textbf{E. Bomba (\unit{\kilo\watt{}\hour})} & \textbf{Total Diario (\unit{\kilo\watt{}\hour})} \\
+            \hline
+            Día Soleado (Máx)  & 0.027                                             & 0.010                                        & 0.037                                            \\
+            Día Intermitente   & 0.003                                             & 0.004                                        & 0.007                                            \\
+            Día Nublado (Mín)  & 0.019                                             & 0.009                                        & 0.027                                            \\
+            \hline
+      \end{tabular}
+      \caption{Consumo energético (\unit{\kilo\watt{}\hour}) desagregado por actuador y condición climática.}
+      \label{tab:res:desglose_escenarios}
 \end{table}
 
 \subsection*{Discusión de Resultados}
 
 \begin{itemize}
-    \item \textbf{Ahorro Significativo:} La implementación del lazo cerrado genera un ahorro del \textbf{[X]\%} respecto a la operación fija. Esto valida que modular la potencia es económicamente superior a mantener el sistema encendido al máximo, incluso en el día más caluroso.
+      \item \textbf{Ahorro Significativo:} La implementación del lazo cerrado genera un ahorro del \qty{94.76}{\percent} respecto a la operación fija. Esto valida que modular la potencia es económicamente superior a mantener el sistema encendido al máximo, incluso en el día más caluroso.
 
-    \item \textbf{Adaptabilidad Automática:} Los datos de la Tabla~\ref{tab:res:desglose_escenarios} demuestran que el consumo disminuye considerablemente en los días Nublado e Intermitente. El controlador "siente" la menor carga térmica y reduce el esfuerzo del ventilador automáticamente, sin intervención humana.
+      \item \textbf{Adaptabilidad Automática:} Los datos de la Tabla~\ref{tab:res:desglose_escenarios} demuestran que el consumo disminuye considerablemente en los días Nublado e Intermitente. El controlador "siente" la menor carga térmica y reduce el esfuerzo del ventilador automáticamente, sin intervención humana.
 
-    \item \textbf{Validación Estrategia SIDO:} En todos los escenarios, el consumo de la bomba se mantiene bajo y estable, validando que limitar su tensión a \qty{3}{\volt} fue una decisión de diseño correcta para minimizar el costo base operativo.
+      \item \textbf{Validación Estrategia SIDO:} En todos los escenarios, el consumo de la bomba se mantiene bajo y estable, validando que limitar su tensión a \qty{3}{\volt} fue una decisión de diseño correcta para minimizar el costo base operativo.
 \end{itemize}

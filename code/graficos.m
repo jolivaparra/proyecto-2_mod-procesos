@@ -69,7 +69,7 @@ ylim([-1, 13]);
 xlabel("Hora del día (hrs)"); ylabel("Voltaje (V)");
 hold off;
 
-if nombre=="Despejado";
+if nombre=="Despejado"
     % ---------- Energía Consumida ----------
     figure("Name", compose("Energía Consumida: %s", nombre), "NumberTitle", "off");
     plot(t/3600, E_vent_plot, "LineWidth", 2, "Color", "b");
@@ -85,7 +85,7 @@ end
 % ---------- Temperatura Ambiente ----------
 figure("Name", compose("Perturbaciones: %s", nombre), "NumberTitle", "off");
 subplot(1, 2, 1);
-plot(t/3600, plot_temp_amb, "LineWidth", 1, "Color", "g");
+plot(t/3600, plot_temp_amb, "LineWidth", 2, "Color", [0,0.5,0]);
 xlim([0,24]); xticks(0:2:24);
 ylim([0, 40]);
 xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
@@ -93,7 +93,7 @@ grid on;
 
 % ---------- Irradiancia Solar ----------
 subplot(1, 2, 2);
-plot(t/3600, plot_irr_sol, "LineWidth", 1, "Color", "y");
+plot(t/3600, plot_irr_sol, "LineWidth", 1.75, "Color", [0.85,0.85,0]);
 xlim([0,24]); xticks(0:2:24);
 ylim([-100, 1100]);
 xlabel("Hora del día (hrs)"); ylabel("Irradiancia (W/m^2)");
