@@ -34,16 +34,19 @@ p.k_vent = 3.5;         % [W/m^2K.V]
 
 p.sigma = 5.67e-8;
 
-p.R_vent = 12;
-p.R_bomb = 48/5;
+% Resistencia Equivalente Ventilador/Bomba
+p.R_vent = 12;          % [Ω]
+p.R_bomb = 48/5;        % [Ω]
 
-% Parámetros para el controlador proporcional
-p.K_p = [-0.25, -0.5, -1.0, -2.0];  % Ganancias a probar
+% ========== CONTROLADOR ==========
 
-p.ref = 45 + 273.15;
-p.offset = 5;
-p.V_MIN = 0;
-p.V_vent_MAX = 12;
-p.V_bomb_suficiente = 3;
+% Ganancias a probar
+p.K_c = [-0.25, -0.5, -1.0, -2.0];
+
+p.ref = 45 + 273.15;    % [°C]
+p.offset = 5;           % [V]
+p.V_MIN = 0;            % [V]
+p.V_vent_MAX = 12;      % [V]
+p.V_bomb_suficiente = 3;% [V]
 
 end

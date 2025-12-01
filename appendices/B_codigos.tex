@@ -1,3 +1,32 @@
 \chapter{Códigos Fuente MATLAB}
 
-A continuación se adjuntan los scripts utilizados para la simulación. Se incluyen las rutinas de definición de parámetros, modelo dinámico, generación de perturbaciones y el script de ejecución principal.
+A continuación se presenta el código de todos los archivos utilizados para la simulación y creación de los gráficos del proyecto.
+
+Este se divide en 4 archivos, cada uno cumpliendo una función específica la cual se detalla a continuación:
+
+\begin{itemize}
+    \item \textbf{main.m} - Archivo principal que orquesta la simulación, llama a las funciones necesarias y genera los gráficos.
+    \item \textbf{parametros.m} - Define todos los parámetros físicos y de diseño utilizados para las simulaciones.
+    \item \textbf{Entradas.m} - Archivo de tipo clase que contiene todas los escenarios de perturbaciones utilizados en todas las simulaciones (Día Despejado, Nublado e Intermitente).
+    \item \textbf{graficos.m} - Función encargada de generar y personalizar todos los gráficos resultantes de las simulaciones en los distintos escenarios de perturbaciones.
+    \item \textbf{modelo.m} - Función que contiene el modelo de EDO's del sistema que se resuelve numerosas veces a lo largo del proyecto.
+\end{itemize}
+
+A continuación se inserta todo el código utilizado.
+\newpage
+
+\begin{multicols}{2}
+    \setstretch{0.95}
+    \small
+
+    \lstinputlisting[caption={Código principal de ejecución}]{code/main.m}
+
+    \lstinputlisting[caption={Generación de gráficos personalizados}]{code/modelo.m}
+
+    \lstinputlisting[caption={Definición de parámetros físicos y de diseño}]{code/parametros.m}
+
+    \lstinputlisting[caption={Definición de escenarios de perturbaciones}]{code/Entradas.m}
+
+    \lstinputlisting[caption={Generación de gráficos personalizados}]{code/graficos.m}
+
+\end{multicols}

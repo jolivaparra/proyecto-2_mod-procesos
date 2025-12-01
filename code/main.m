@@ -1,6 +1,6 @@
 %% ========== CÓDIGO PRINCIPAL ==========
 clear; close all; clc;
-set(0, 'DefaultAxesBox', 'on'); % Da bordes a los gráficos
+
 % =========== Carga de Parámetros y Perturbaciones ==========
 p = parametros();
 pert = Entradas();
@@ -9,31 +9,8 @@ tspan = 0:69:24*3600;
 T0 = pert.temperatura_ambiente_despejado(0) + 273.15;
 y0 = [T0, T0];
 
-%% ========== SIN REFRIGERACION ==========
-
-odefun_snrefr = @(t, y) modelo(t, y, p, ...
-    @(t) pert.temperatura_ambiente_despejado(t), ...
-    @(t) pert.irradiancia_solar_despejado(t), ...
-    @(t) pert.velocidad_viento(t), ...
-    0, ...
-    @(t) 0, ...
-    @(t) 0, ...
-    0);
-
-[t_sr, y_sr] = ode45(odefun_snrefr, tspan, y0);
-T_p_sr = y_sr(:, 1) - 273.15;
-
-fprintf("Máx día despejado sin refrigeración: %.2f\n", max(T_p_sr));
-
-figure("Name", "Sin Refrigeración", "NumberTitle", "off");
-plot(t_sr/3600, T_p_sr, "LineWidth", 2, "Color", "b");
-xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
-xlim([0, 24]); xticks(0:2:24);
-grid on;
-
-
 %% ========== LAZO ABIERTO (ESCALÓN)  ==========
-
+% Define entradas y resuelve EDO
 voltaje_bomba_escalon = @(t) 24 * ((9 <= t/3600) & (t/3600 <= 19));
 voltaje_ventilador_escalon = @(t) 12 * ((9 <= t/3600) & (t/3600 <= 19));
 
@@ -45,111 +22,117 @@ odefun_la = @(t, y) modelo(t, y, p, ...
 
 [t_la, y_la] = ode45(odefun_la, tspan, y0);
 T_p_la = y_la(:, 1) - 273.15;
+t_la_h = t_la/3600;
 
 % Máx temperatura alcanzada.
 max_temp = max(T_p_la);
 
-% Para graficar energía consumida
+% ---------- Energía Consumida ----------
+% Calcula energía consumida acomulada para graficar
 W_vent = arrayfun(voltaje_ventilador_escalon, t_la).^2 / p.R_vent;
 W_bomb = arrayfun(voltaje_bomba_escalon, t_la).^2 / p.R_bomb;
-% Energía consumida en kWh
-E_vent_plot = cumtrapz(t_la, W_vent) / 3.6e+6;
-E_bomb_plot = cumtrapz(t_la, W_bomb) / 3.6e+6;
-E_total_plot = E_vent_plot + E_bomb_plot;
-
-% Datos energéticos para extraer
-E_vent = trapz(t_la, W_vent) / 3.6e+6;
-E_bomb = trapz(t_la, W_bomb) / 3.6e+6;
+% Calcula energía consumida en kWh
+E_vent = cumtrapz(t_la, W_vent) / 3.6e+6;
+E_bomb = cumtrapz(t_la, W_bomb) / 3.6e+6;
 E_total = E_vent + E_bomb;
 
+% Imprime en la consola datos térmicos y energéticos relevantes
 fprintf("Lazo Abierto:\t Temp Máx |  E_vent   |   E_bomb  | E_total \n")
-fprintf("\t\t %.2f °C | %.3f kWh | %.3f kWh | %.3f kWh \n", max_temp, E_vent, E_bomb, E_total);
+fprintf("\t\t %.2f °C | %.3f kWh | %.3f kWh | %.3f kWh \n", max_temp, E_vent(end), E_bomb(end), E_total(end));
 
+% Grafica Temperatura del Panel en Lazo Abierto
 figure("Name", "Lazo Abierto", "NumberTitle", "off");
-plot(t_la/3600, T_p_la, "LineWidth", 2, "Color", "b");
+plot(t_la_h, T_p_la, "LineWidth", 2, "Color", "b");
 xlabel("Hora del día (hrs)"); ylabel("Temperatura del Panel (°C)");
 xlim([0, 24]); xticks(0:2:24);
 ylim([0, 60]);
 grid on;
 
-figure("Name", "Energía consumida Lazo Abierto", "NumberTitle", "off");
+% Grafica Energía consumida por actuadores
+figure("Name", "E Consum. Lazo Abierto", "NumberTitle", "off");
 hold on; grid on;
-plot(t_la/3600, E_total_plot, "LineWidth", 2, "Color", "g");
-plot(t_la/3600, E_vent_plot, "LineWidth", 2, "Color", "b");
-plot(t_la/3600, E_bomb_plot, "LineWidth", 2, "Color", "r");
+plot(t_la_h, E_total, "LineWidth", 2, "Color", "g");
+plot(t_la_h, E_vent, "LineWidth", 2, "Color", "b");
+plot(t_la_h, E_bomb, "LineWidth", 2, "Color", "r");
 legend("E. consum. Ventilador", "E. consum. Bomba", "E. Total consum.", "Location", "northwest");
 xlim([0,24]); xticks(0:2:24);
 ylim([-0.1, 0.8]); yticks(0:0.2:0.8);
 xlabel("Hora del día (hrs)"); ylabel("Energía Consumida (kWh)");
 
-
-%% ========== OBJETIVO 6: ESTABILIDAD EN ESCENARIO REAL (DÍA DESPEJADO) ==========
-figure("Name", "Comparativa Kp - Día Despejado", "NumberTitle", "off");
+%% ========== VARIACIONES DE Kc ==========
+% Prepara gráficos
+figure("Name", "Comparativa Kc - Día Despejado", "NumberTitle", "off");
 
 % --- Subplot 1: Temperaturas ---
 ax1 = subplot(1, 2, 1); hold on; grid on;
 ylabel("Temperatura Panel (°C)");
 xlabel("Hora del día (hrs)");
-xlim([0 24]); ylim([0 60]);
-yline(55, 'k--', 'Límite 55°C', 'LabelHorizontalAlignment', 'right');
+xlim([0, 24]); xticks(0:2:24);
+ylim([0 60]);
+
+yline(55, 'k--', 'Límite 55°C', 'LabelHorizontalAlignment', 'right', 'HandleVisibility', 'off');
 
 % --- Subplot 2: Esfuerzo de Control ---
 ax2 = subplot(1, 2, 2); hold on; grid on;
 ylabel("Voltaje (V)");
 xlabel("Hora del día (hrs)");
-xlim([0 24]); ylim([-1 13]);
+xlim([0, 24]); xticks(0:2:24);
+ylim([-1 13]);
 
 % Definición de perturbaciones
 f_amb = @(t) pert.temperatura_ambiente_despejado(t);
 f_irr = @(t) pert.irradiancia_solar_despejado(t);
 f_wind = @(t) pert.velocidad_viento(t);
 
-colores = lines(length(p.K_p));
-leyendas = strings(1, length(p.K_p));
+colores = lines(length(p.K_c));
 
-% === ARRAYS PARA GUARDAR LOS OBJETOS DE LA GRÁFICA ===
-graficas_temp = gobjects(1, length(p.K_p));
-graficas_volt = gobjects(1, length(p.K_p));
+% --- BUCLE DE SIMULACIÓN ---
+for i = 1:length(p.K_c)
+    Kc_actual = p.K_c(i);
 
-for i = 1:length(p.K_p)
-    Kp_actual = p.K_p(i);
+    % Resuelve EDO's
+    [t_sim, y_sim] = ode45(@(t,y) modelo(t,y,p, f_amb, f_irr, f_wind, 1, @(t)0, @(t)0, Kc_actual), tspan, y0);
 
-    [t_sim, y_sim] = ode45(@(t,y) modelo(t,y,p, f_amb, f_irr, f_wind, 1, @(t)0, @(t)0, Kp_actual), tspan, y0);
-
+    % Calcula variables a graficar
     T_panel = y_sim(:, 1) - 273.15;
-    u_calc = Kp_actual * (p.ref - y_sim(:,1)) + p.offset;
+    u_calc = Kc_actual * (p.ref - y_sim(:,1)) + p.offset;
     V_vent_plot = min(p.V_vent_MAX, max(u_calc, p.V_MIN));
 
-    % --- Graficamos Temp y GUARDAMOS EL OBJETO ---
-    graficas_temp(i) = plot(ax1, t_sim/3600, T_panel, 'LineWidth', 2, 'Color', colores(i,:));
+    % Crea leyenda
+    etiqueta_leyenda = sprintf('K_c = %.2f', Kc_actual);
 
-    % --- Graficamos Voltaje y GUARDAMOS EL OBJETO ---
-    % <--- MODIFICADO: Ahora guardamos esto en 'graficas_volt(i)'
-    graficas_volt(i) = plot(ax2, t_sim/3600, V_vent_plot, 'LineWidth', 1.5, 'Color', colores(i,:));
+    % --- Graficar Temperatura ---
+    plot(ax1, t_sim/3600, T_panel, ...
+        'LineWidth', 2, ...
+        'Color', colores(i,:), ...
+        'DisplayName', etiqueta_leyenda);
 
-    % Creamos el texto de la leyenda para este Kp
-    leyendas(i) = compose('K_p = %.2f', Kp_actual);
+    % --- Graficar Voltaje ---
+    plot(ax2, t_sim/3600, V_vent_plot, ...
+        'LineWidth', 1.5, ...
+        'Color', colores(i,:), ...
+        'DisplayName', etiqueta_leyenda);
 end
 
-% === AÑADIR LAS LEGENDS AL FINAL ===
-% <--- AGREGADO: Aquí aplicamos las leyendas a los objetos guardados
-legend(ax1, graficas_temp, leyendas, 'Location', 'best', 'Interpreter', 'tex');
-legend(ax2, graficas_volt, leyendas, 'Location', 'northeast', 'Interpreter', 'tex');
+% === ACTIVA LEYENDAS ===
+legend(ax1, 'Location', 'best', 'Interpreter', 'tex');
+legend(ax2, 'Location', 'northeast', 'Interpreter', 'tex');
 
-%% ========== STEP TEST (OBJETIVO 5) - FINAL ==========
+%% ========== USO DE MÉTRICAS (STEP TEST) ==========
 p_test = p;
-Kp_val = p_test.K_p(1);
+Kc_val = p_test.K_c(1);
+
 % Parametros constantes
 in_amb = @(t) 30; in_irr = @(t) 800; in_wind = @(t) 5.0;
 
 % --- FASE 1: Pre-estabilización (1 hora a 40°C) ---
 p_test.ref = 40 + 273.15;
-[t1, y1] = ode45(@(t,y) modelo(t,y,p_test,in_amb,in_irr,in_wind,1,@(t)0,@(t)0,Kp_val), ...
-    [0 3600], [303.15, 303.15]);
+[t1, y1] = ode45(@(t,y) modelo(t,y,p_test,in_amb,in_irr,in_wind,1,@(t)0,@(t)0,Kc_val), ...
+    [0 3600], [273.15 + 30, 273.15 + 30]);
 
 % --- FASE 2: Escalón (1 hora a 55°C) ---
 p_test.ref = 55 + 273.15;
-[t2, y2] = ode45(@(t,y) modelo(t,y,p_test,in_amb,in_irr,in_wind,1,@(t)0,@(t)0,Kp_val), ...
+[t2, y2] = ode45(@(t,y) modelo(t,y,p_test,in_amb,in_irr,in_wind,1,@(t)0,@(t)0,Kc_val), ...
     [3600 7200], y1(end,:));
 
 % Unir datos
@@ -163,6 +146,7 @@ t_rel = t2 - t2(1);
 % 1. Centro de Oscilación (Último 30% de datos)
 idx_cola = round(length(T_fase2) * 0.7) : length(T_fase2);
 datos_cola = T_fase2(idx_cola);
+% Promedio de Osc_max y Osc_min
 T_final_real = (max(datos_cola) + min(datos_cola)) / 2;
 
 % 2. Delta del viaje
@@ -186,22 +170,28 @@ else
     Tr = 0;
 end
 
-% 6. Otras
+% Error de estado estacionario
 ESS = 55 - T_final_real;
+% Sobrepaso
 Sobrepaso = max(T_fase2) - T_final_real;
 
-% --- IMPRIMIR RESULTADOS ---
+% --- IMPRIME RESULTADOS EN CONSOLA ---
 fprintf('\n--- RESULTADOS ENTORNO CONTROLADO ---\n');
 fprintf('Tr: %.1f s | Ts: %.1f s | ESS: %.2f °C | Sobrepaso: %.2f\n\n', Tr, Ts, ESS, Sobrepaso);
 fprintf('Centro Oscilación: %.4f°C\n', T_final_real);
 fprintf('Banda (5%%): +/- %.4f°C\n', banda);
 
-% --- GRÁFICOS FINAL ---
-figure("Name", "Step Test - Métricas", "NumberTitle", "off");
+% --- GRÁFICOS FINALES ---
+figure("Name", "Ent. Controlado: Métricas", "NumberTitle", "off");
 
 % Subplot 1: Temperatura
 subplot(1,2,1);
 plot(t_total/3600, T_total, 'b', 'LineWidth', 2); grid on; hold on;
+xlim([0 2]);
+ylim([40 57.5]);
+xlabel('Tiempo (h)'); ylabel('Temperatura del Panel (°C)');
+
+% Referencia y valor final
 yline(55, 'r--', 'Ref 55'); yline(45, 'r--', 'Ref 45');
 yline(T_final_real, 'k-.', 'Centro Osc.');
 
@@ -210,44 +200,33 @@ yline(T_final_real + banda, 'Color', [0 0.5 0], 'LineStyle', '--', 'LineWidth', 
 yline(T_final_real - banda, 'Color', [0 0.5 0], 'LineStyle', '--', 'LineWidth', 1.5);
 
 % Línea de Tiempo de Estabilización
-if Ts > 0
-    % (3600 + Ts) porque el escalón empieza en la hora 1
-    xline((3600+Tr)/3600, 'm-', compose('Tr=%.0fs', Ts), 'LineWidth', 2, 'LabelVerticalAlignment', 'bottom', 'Color', 'b');
-    xline((3600+Ts)/3600, 'm-', compose('Ts=%.0fs', Ts), 'LineWidth', 2);
-end
-
-title("Respuesta Transitoria");
-xlim([0 2]);
-ylim([40 57.5]);
-xlabel('Tiempo (h)'); ylabel('Temperatura del Panel (°C)');
+xline((3600+Tr)/3600, 'm-', compose('Tr=%.0fs', Ts), 'LineWidth', 2, 'LabelVerticalAlignment', 'bottom', 'Color', 'b');
+xline((3600+Ts)/3600, 'm-', compose('Ts=%.0fs', Ts), 'LineWidth', 2);
 
 % Subplot 2: Esfuerzo de Control
 subplot(1,2,2);
-u_calc = Kp_val * ((t_total>=3600).*(55+273.15) + (t_total<3600).*(40+273.15) - (T_total+273.15)) + p.offset;
+u_calc = Kc_val * ((t_total>=3600).*(55+273.15) + (t_total<3600).*(40+273.15) - (T_total+273.15)) + p.offset;
 V_vent_plot = min(12, max(0, u_calc));
 plot(t_total/3600, V_vent_plot, 'b', 'LineWidth', 1.5);
 grid on;
-title('Esfuerzo de Control');
 xlim([0 2]); % Límite Fijo solicitado
 ylim([-1 13]);
 xlabel('Tiempo (h)'); ylabel('Voltaje (V)');
 
-%% ========== LAZO CERRADO (VALIDACIÓN DEL DISEÑO FINAL) ==========
-% Objetivo: Demostrar que el Kp elegido (-0.1) funciona en los 3 climas.
-% NO comparamos Kp aquí, solo validamos el comportamiento.
+%% ========== LAZO CERRADO: VALIDACIÓN DEL DISEÑO FINAL (Kc = -0.25) ==========
 
 nombre_perfiles = ["Despejado", "Nublado", "Intermitente"];
 
 % Array de funciones de pertubación
 perfil_pert = {
     @(t) pert.temperatura_ambiente_despejado(t), @(t) pert.irradiancia_solar_despejado(t);
-    @(t) pert.temperatura_ambiente_nublado(t),   @(t) pert.irradiancia_solar_nublado(t);
+    @(t) pert.temperatura_ambiente_nublado(t), @(t) pert.irradiancia_solar_nublado(t);
     @(t) pert.temperatura_ambiente_intermitente(t), @(t) pert.irradiancia_solar_intermitente(t)
     };
 
-Kp_optimo = p.K_p(1);
+Kp_optimo = p.K_c(1);
 
-fprintf("--- (K_p:%.3f) Max Temp |  E_vent   |  E_bomb   |  E_total \n", Kp_optimo);
+fprintf("--- (K_c:%.3f) Max Temp |  E_vent   |  E_bomb   |  E_total \n", Kp_optimo);
 
 for i=1:size(perfil_pert, 1)
     temperatura_ambiente = perfil_pert{i, 1};
@@ -256,8 +235,7 @@ for i=1:size(perfil_pert, 1)
 
     nombre_graf = nombre_perfiles(i);
 
+    % Grafica Temperatura del Panel, Entradas y Perturbaciones Aplicadas
     graficos(nombre_graf, p, temperatura_ambiente, irradiancia_solar, ...
         velocidad_viento, 1, @(t) 0, @(t) 0, Kp_optimo);
 end
-
-

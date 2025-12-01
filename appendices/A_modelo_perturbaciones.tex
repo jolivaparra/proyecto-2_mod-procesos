@@ -26,8 +26,6 @@ Cada función $\beta_i(t)$ se define como una señal periódica rectangular util
     \end{cases}
 \end{equation}
 
-
-
 Donde:
 \begin{itemize}
     \item $T_i$: Periodo de recurrencia de la nube.
@@ -58,18 +56,17 @@ A diferencia de la irradiancia, la temperatura del aire no cambia instantáneame
     T_{amb, int}(t) = T_{base}(t) - \Delta T_{inercial}(t)
 \end{equation}
 
-El término de reducción $\Delta T_{inercial}(t)$ se activa únicamente durante las horas de sol y se calcula mediante una función cosenoidal desplazada en el tiempo:
+El término de reducción $\Delta T_{inercial}(t)$ se activa únicamente durante las horas de sol y se calcula mediante una función cosenoidal invertida y normalizada:
 
 \begin{equation}
-    \Delta T_{inercial}(t) = \Delta T_{max} \cdot \left( \frac{\cos\left( \frac{2\pi}{T_1}(t - \tau) \right) + 1}{2} \right)
+    \Delta T_{inercial}(t) = \Delta T_{max} \cdot \left( \frac{1 - \cos\left( \frac{2\pi}{T_1}(t - \tau) \right)}{2} \right)
 \end{equation}
 
 Donde los parámetros físicos son:
 \begin{itemize}
     \item $\Delta T_{max} = \qty{4}{\degreeCelsius}$: Máxima caída de temperatura del aire debido a la sombra.
     \item $T_1 = \qty{2.5}{h}$: Frecuencia sincronizada con la nubosidad principal.
-    \item $\tau = \qty{45}{min}$: \textbf{Retardo por inercia térmica}. Representa el tiempo que tarda la masa de aire en enfriarse tras el bloqueo de la radiación solar.
+    \item $\tau = \qty{45}{min}$: \textbf{Retardo por inercia térmica}. Representa el tiempo que tarda la masa de aire en comenzar a enfriarse tras el cambio en la radiación.
 \end{itemize}
 
-Esta formulación asegura continuidad de clase $C^1$ en la variable de temperatura, evitando saltos abruptos no físicos en la simulación.
-
+Esta formulación asegura que la reducción inicie suavemente desde cero (continuidad de clase $C^1$), evitando saltos abruptos no físicos en la simulación.

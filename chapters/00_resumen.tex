@@ -1,3 +1,8 @@
 \begin{abstract}
+    El presente proyecto aborda la problemática de la degradación térmica y pérdida de eficiencia en paneles fotovoltaicos, diseñando y validando una estrategia de enfriamiento activo por agua en circuito cerrado. El objetivo principal fue implementar un sistema de control en lazo cerrado capaz de mantener la temperatura operativa del panel bajo el límite de seguridad de \qty{55}{\celsius}, optimizando simultáneamente el consumo energético de los actuadores.
+
+    La metodología consistió en la implementación de un algoritmo de control Proporcional ($P$) con compensación de punto de operación, gestionando de forma híbrida una bomba hidráulica y un ventilador mediante saturación de voltaje. A través de simulaciones dinámicas en MATLAB bajo escenarios de perturbación realistas (días despejados, nublados e intermitentes), se sintonizó una ganancia de $K_{c}=-0,25$, priorizando la estabilidad y la suavidad de actuación.
+
+    Los resultados validaron la robustez del diseño, logrando mantener la temperatura máxima del panel en \qty{54,04}{\celsius} bajo condiciones de carga extrema, con un sobrepaso marginal de \qty{0,13}{\celsius}. El hallazgo más significativo fue la eficiencia energética del sistema: la estrategia propuesta redujo el consumo eléctrico diario en un \textbf{\qty{94,86}{\percent}} respecto a la operación convencional en lazo abierto, disminuyendo la demanda de \qty{0,720}{\kilo\watt{}\hour} a solo \qty{0,037}{\kilo\watt{}\hour}. Esto confirma la viabilidad técnica y económica de la modulación activa de potencia para la gestión térmica de sistemas fotovoltaicos.
 
 \end{abstract}

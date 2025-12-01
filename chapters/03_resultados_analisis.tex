@@ -37,30 +37,30 @@ Una vez caracterizada la planta, se procedió al diseño del controlador en lazo
 
 El objetivo de esta comparativa es encontrar el compromiso óptimo entre la velocidad de reducción de temperatura y la estabilidad de la señal de control enviada a los actuadores.
 
-La Figura~\ref{fig:plot:comparativa-kp} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
+La Figura~\ref{fig:plot:comparativa-kc} presenta la superposición de las respuestas temporales y el esfuerzo de control resultante para los distintos valores de ganancia probados.
 
 \begin{figure}[H]
       \centering
+      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel solar. \textbf{(b)} Tensión (\unit{\volt}) aplicada en cada actuador.}
       \begin{subfigure}[t]{0.45\textwidth}
+            \includegraphics[width=\textwidth]{plots/comparativa-kc-temp-panel.pdf}
             \caption{}
-            \label{fig:plot:comparativa-kp-a}
-            \includegraphics[width=\textwidth]{plots/comparativa-Kp-temp-panel.pdf}
+            \label{fig:plot:comparativa-kc-a}
       \end{subfigure}
       \hfil
       \begin{subfigure}[t]{0.45\textwidth}
+            \includegraphics[width=\textwidth]{plots/comparativa-kc-volt.pdf}
             \caption{}
-            \label{fig:plot:comparativa-kp-b}
-            \includegraphics[width=\textwidth]{plots/comparativa-Kp-volt.pdf}
-            \label{fig:plot:comparativa-kp}
+            \label{fig:plot:comparativa-kc-b}
       \end{subfigure}
-      \caption{\textbf{(a)} Temperatura (\unit{\degreeCelsius}) del panel solar. \textbf{(b)} Tensión (\unit{\volt}) aplicada en cada actuador.}
+      \label{fig:plot:comparativa-kc}
 \end{figure}
 
 A partir de la visualización del comportamiento dinámico, se observan dos fenómenos contrapuestos:
 
 \begin{enumerate}
       \item \textbf{Comportamiento con Altas Ganancias ($K_c = -1.0, -2.0$):}
-            Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:plot:comparativa-kp-b} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
+            Si bien las ganancias de mayor magnitud logran acercar la temperatura a la referencia más rápidamente, se observa en el gráfico inferior de la Figura~\ref{fig:plot:comparativa-kc-b} que la señal de voltaje entra en una zona de \textbf{saturación oscilatoria} o comportamiento agresivo.
             Este fenómeno provoca cambios bruscos en la velocidad del ventilador, lo cual es indeseable mecánicamente y no se traduce en una mejora térmica significativa debido a la lenta inercia térmica del agua.
 
       \item \textbf{Comportamiento con Bajas Ganancias ($K_c = -0.25$):}
@@ -92,12 +92,12 @@ La Figura~\ref{fig:plot:entorno-controlado} ilustra la respuesta temporal del si
       \label{fig:plot:entorno-controlado}
       \begin{subfigure}[b]{0.45\textwidth}
             \includegraphics[width=\textwidth]{plots/entorno-controlado-temp-panel.pdf}
-            \caption{Temperatura (\unit{\degreeCelsius}) del panel.}
+            \caption{Respuesta transitoria: Temperatura (\unit{\degreeCelsius}) del panel solar.}
             \label{fig:plot:entorno-controlado-a}
       \end{subfigure}
       \begin{subfigure}[b]{0.45\textwidth}
             \includegraphics[width=\textwidth]{plots/entorno-controlado-volt.pdf}
-            \caption{Tensión (\unit{\volt}) aplicada en los actuadores.}
+            \caption{Esfuerzo de control: Tensión (\unit{\volt}) aplicada a los actuadores.}
             \label{fig:plot:entorno-controlado-b}
       \end{subfigure}
 \end{figure}
@@ -240,7 +240,7 @@ Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a la ope
 \begin{figure}[H]
       \centering
       \includegraphics[width=0.8\textwidth]{plots/energia-lazo-abierto.pdf}
-      \caption{Energía Consumida por el sistema de regriferación en Lazo Abierto.}
+      \caption{Energía Consumida por el sistema de refrigeración en Lazo Abierto.}
       \label{fig:plot:energia-consumida-lazo-abierto}
 \end{figure}
 
@@ -248,7 +248,7 @@ Se contrastó el consumo del controlador propuesto ($K_c=-0.25$) frente a la ope
       \centering
       \includegraphics[width=0.8\textwidth]{plots/energia-dia-despejado.pdf}
 
-      \caption{Energía Consumida por el sistema de regriferación en Lazo Cerrado.}
+      \caption{Energía Consumida por el sistema de refrigeración en Lazo Cerrado.}
       \label{fig:plot:energia-consumida-lazo-cerrado}
 \end{figure}
 
@@ -279,8 +279,8 @@ Además del ahorro base, se verificó la capacidad del controlador para reducir 
             \textbf{Escenario} & \textbf{E. Ventilador (\unit{\kilo\watt{}\hour})} & \textbf{E. Bomba (\unit{\kilo\watt{}\hour})} & \textbf{Total Diario (\unit{\kilo\watt{}\hour})} \\
             \hline
             Día Soleado (Máx)  & 0.027                                             & 0.010                                        & 0.037                                            \\
-            Día Intermitente   & 0.003                                             & 0.004                                        & 0.007                                            \\
-            Día Nublado (Mín)  & 0.019                                             & 0.009                                        & 0.027                                            \\
+            Día Nublado (Mín)  & 0.003                                             & 0.004                                        & 0.007                                            \\
+            Día Intermitente   & 0.019                                             & 0.009                                        & 0.027                                            \\
             \hline
       \end{tabular}
       \caption{Consumo energético (\unit{\kilo\watt{}\hour}) desagregado por actuador y condición climática.}

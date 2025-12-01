@@ -28,11 +28,15 @@
 \input{appendices/B_codigos.tex}
 
 % ========== BIBLIOGRAFÍA ==========
-\newpage
+
+
+\begingroup
+\let\clearpage\relax       % Neutraliza el salto de página
 \pdfbookmark{Bibliografía}{bibliografia}
 \printbibliography[
     heading=bibintoc, % Añade la entrada al índice
     title={Bibliografía}
 ]
+\endgroup
 
 \end{document}

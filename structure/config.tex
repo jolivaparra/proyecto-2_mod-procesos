@@ -23,8 +23,7 @@
 % COMANDOS ÚTILES DEL INFORME
 \newcommand{\AuthorName}{Joshua S. Oliva Parra}
 \newcommand{\ProfessorName}{Juan Pablo Segovia Vera}
-\newcommand{\MainTitle}{Modelación de sistema de enfriamiento de agua en
-    circuito cerrado para paneles fotovoltaicos}
+\newcommand{\MainTitle}{Diseño de Control y Optimización Energética para Sistema de Enfriamiento de Paneles Fotovoltaicosgit }
 
 % EXTRAS
 \sisetup{
@@ -52,3 +51,47 @@
 \renewcommand{\cftloftitlefont}{\Large\bfseries\sffamily}
 \renewcommand{\cftlottitlefont}{\Large\bfseries\sffamily}
 \renewcommand{\cfttoctitlefont}{\Large\bfseries\sffamily}
+
+% Insertar Códigos
+% Colores personalizados (opcional)
+\definecolor{miblue}{rgb}{0,0,1}
+\definecolor{migray}{rgb}{0.4,0.4,0.4}
+\definecolor{miteal}{rgb}{0.0,0.5,0.5}
+
+% Configuración general de listings para MATLAB
+\lstset{
+language=Matlab,
+inputencoding=utf8,
+extendedchars=true,
+literate={ñ}{{\~n}}1
+{Ñ}{{\~N}}1
+{á}{{\'a}}1
+{é}{{\'e}}1
+{í}{{\'i}}1
+{ó}{{\'o}}1
+{ú}{{\'u}}1
+{Á}{{\'A}}1
+{É}{{\'E}}1
+{Í}{{\'I}}1
+{Ó}{{\'O}}1
+{Ú}{{\'U}}1
+{°}{{$^{\circ}$}}1
+{·}{{$\cdot$}}1
+{Ω}{{$\Omega$}}1  % <--- ESTA ES LA SOLUCIÓN CLAVE
+{µ}{{$\mu$}}1      % Recomendado: Para micro (ej. µF)
+{π}{{$\pi$}}1,     % Recomendado: Para pi
+backgroundcolor=\color{white},
+basicstyle=\ttfamily\scriptsize,
+numbers=left,
+numberstyle=\tiny,
+numbersep=4pt,
+xleftmargin=0.5em,
+xrightmargin=0.5em,
+breaklines=true,
+frame=single,
+captionpos=b,
+keywordstyle=\color{miblue},
+commentstyle=\color{migray},
+stringstyle=\color{miteal},
+showstringspaces=false
+}
